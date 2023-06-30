@@ -50,27 +50,21 @@ Proposer可以提出（propose）提案；Acceptor可以接受（accept）提案
 
 - 一个完整的`Paxos`算法流程分为三个阶段
 
-- ```
-  Prepare
-  ```
+- `Prepare`
 
   准备阶段
 
   - `Proposer`向多个`Acceptor`发出`Propose`请求`Promise`(承诺)
   - `Acceptor`针对收到的`Propose`请求进行`Promise`(承诺)
 
-- ```
-  Accept
-  ```
+- `Accept`
 
   接收阶段
 
   - `Proposer`收到多数`Acceptor`承诺后,向`Acceptor`发出`Propose`请求
   - `Acceptor`针对收到的`Propose`请求进行`Accept`处理
 
-- ```
-  Learn
-  ```
+- `Learn`
 
   学习阶段
 
@@ -82,23 +76,7 @@ Proposer可以提出（propose）提案；Acceptor可以接受（accept）提案
 
 1. `Prepare`：`Proposer`生成全局唯一且递增的`Proposal ID`,向所有`Acceptor`发送`Propose`请求,这里无序携带提案内容,只携带`Proposal ID`即可
 
-2. ```
-   Promise
-   ```
-
-   ：
-
-   ```
-   Accept
-   ```
-
-   收到
-
-   ```
-   Propose
-   ```
-
-   请求后，做出”两个承诺，一个答应”。
+2. `Promise`：`Accept`收到`Propose`请求后，做出”两个承诺，一个答应”。
 
    - 不在接收`Proposal ID`小于等于（注意：这里时<=）当前请求的`Propose`请求。
    - 不在接收`Proposal ID`小于（注意：这里是<）当前请求的`Accept`请求。

@@ -22,8 +22,7 @@
 
 先看看 `java.util.Random` 的使用方法。
 
-```
-JAVA
+```JAVA
 public class RandomTest {
     public static void main(String[] args) {
         //创建一个默认种子的随机数生成器
@@ -40,8 +39,7 @@ public class RandomTest {
 
 接下来我们来看看获取随机数的方法 `nextInt(int bound)`
 
-```
-JAVA
+```JAVA
 public int nextInt(int bound) {
     //参数检查
     if (bound <= 0)
@@ -67,9 +65,9 @@ public int nextInt(int bound) {
 
 Random 函数使用了一个原子变量达到了这个效果，在创建 Random 对象时初始化的种子就被保存到了种子原子变量里面。
 
-```
-next()
-JAVA
+`next()`
+
+```JAVA
 protected int next(int bits) {
     long oldseed, nextseed;
     AtomicLong seed = this.seed;
@@ -93,8 +91,7 @@ protected int next(int bits) {
 
 使用
 
-```
-JAVA
+```JAVA
 public class ThreadLocalRandomTest {
     public static void main(String[] args) {
         //获取一个随机数生成器
@@ -150,8 +147,7 @@ Random的缺点是多个线程会使用同一个原子性种子变量，从而�
 
 `AtomicLong` 源码
 
-```
-JAVA
+```JAVA
 public class AtomicLong extends Number implements java.io.Serializable {
     private static final long serialVersionUID = 1927816293512124184L;
 
@@ -192,8 +188,7 @@ public class AtomicLong extends Number implements java.io.Serializable {
 
 1. 递增和递减操作代码
 
-```
-JAVA
+```JAVA
 //调用unsafe方法，原子性设置value值为原始值+1，返回值为递增后的值
 public final long getAndIncrement() {
     return unsafe.getAndAddLong(this, valueOffset, 1L);
@@ -218,8 +213,7 @@ public final long decrementAndGet() {
 
 `getAndAddLong` 方法在 `JDK` 7 中的实现逻辑是通过自旋锁进行更新。
 
-```
-JAVA
+```JAVA
 public final long getAndIncrement(){
     while (true){
         long current = get();
@@ -233,8 +227,7 @@ public final long getAndIncrement(){
 
 而在 `JDK` 8 将改代码转移到了 `unsafe.getAndAddLong` 中
 
-```
-JAVA
+```JAVA
 public final long getAndAddLong(Object o, long offset, long delta) {
     long v;
     do {
@@ -250,8 +243,7 @@ public final long getAndAddLong(Object o, long offset, long delta) {
 
 1. `public final boolean compareAndSet(long expect, long update)` 方法
 
-```
-JAVA
+```JAVA
 public final boolean compareAndSet(long expect, long update) {
     return unsafe.compareAndSwapLong(this, valueOffset, expect, update);
 }
@@ -261,8 +253,7 @@ public final boolean compareAndSet(long expect, long update) {
 
 案例：统计 0 的个数
 
-```
-JAVA
+```JAVA
 public class AtomicTest {
 
     //创建Long型原子计数器
@@ -328,15 +319,11 @@ public class AtomicTest {
 
 > 既然 `AtomicLong` 的性能瓶颈是过多线程同时去竞争一个变量的更新而产生的，那么如果把一个变量分解为多个变量，让同样多的线程去竞争多个资源。
 
-```
-AtomicLong
-```
+`AtomicLong`
 
 [![image-20220903195740847](https://ding-blog.oss-cn-chengdu.aliyuncs.com/images/202209031957914.png)](https://ding-blog.oss-cn-chengdu.aliyuncs.com/images/202209031957914.png)
 
-```
-LongAdder
-```
+`LongAdder`
 
 [![image-20220903200134369](https://ding-blog.oss-cn-chengdu.aliyuncs.com/images/202209032001423.png)](https://ding-blog.oss-cn-chengdu.aliyuncs.com/images/202209032001423.png)
 
@@ -362,8 +349,7 @@ LongAdder
 
 **`Cell` 的构造**
 
-```
-JAVA
+```JAVA
 @sun.misc.Contended static final class Cell {
    volatile long value;
    Cell(long x) { value = x; }
@@ -391,8 +377,7 @@ JAVA
 
 - `long sum()` **返回当前的值，内部操作时累加所有 Cell 内部的 value 值后再累加 base。**
 
-```
-JAVA
+```JAVA
 public long sum() {
     Cell[] as = cells; Cell a;
     long sum = base;
@@ -410,8 +395,7 @@ public long sum() {
 
 - `void reset()` 重置操作，如下代码**把 base 置为 0，如果 Cell 数组有元素，则元素值被重置为 0**。
 
-```
-JAVA
+```JAVA
 public void reset() {
     Cell[] as = cells; Cell a;
     base = 0L;
@@ -426,8 +410,7 @@ public void reset() {
 
 - `long sumThenReset()` 是 `sum` 的改造版本，**在使用 sum 累加对应的 Cell 值后，把当前 Cell 的值重置为 0，base 重置为 0。**这样当多线程调用该方法时会有问题，比如考虑第一个调用线程清空 Cell 的值，则后一个线程调用时累加的都是 0 值。
 
-```
-JAVA
+```JAVA
 public long sumThenReset() {
     Cell[] as = cells; Cell a;
     long sum = base;
@@ -447,8 +430,7 @@ public long sumThenReset() {
 - `long longValue()` **等价于 `sum()`**
 - `void add(long x)`
 
-```
-JAVA
+```JAVA
 public void add(long x) {
     Cell[] as; long b, v; int m; Cell a;
     //首先查看 cells 是否为null，如果为null 则在基础变量 base 上进行累加，这时类似 AtomicLong 的操作
@@ -476,8 +458,7 @@ final boolean casBase(long cmp, long val) {
 
 `LongAdder` 类是 `LongAccumulator` 的一个特例，`LongAccumulator` 比 `LongAdder` 的功能更强大。例如如下的构造函数，**其中 `accumulatorFunction` 是一个双目运算器接口，其根据输入的两个参数返回一个计算值，identity 则是 `LongAccumulator` 累加器的初始值（base的值）。**
 
-```
-JAVA
+```JAVA
 public LongAccumulator(LongBinaryOperator accumulatorFunction,
                            long identity) {
     this.function = accumulatorFunction;
@@ -493,8 +474,7 @@ public interface LongBinaryOperator {
 
 `LongAccumulator` 相比于 `LongAdder`，**可以为累加器提供非 0 的初始值**，**后者只能提供默认的 0 值**。另外，**`LongAccumulator` 还可以指定累加规则**，只需要在构造 `LongAccumulator` 时传入自定义的双目运算器即可，`LongAdder` 则内置累加的规则。
 
-```
-JAVA
+```JAVA
 public void accumulate(long x) {
     Cell[] as; long b, v, r; int m; Cell a;
    
@@ -540,8 +520,7 @@ public void accumulate(long x) {
 
 无参构造
 
-```
-JAVA
+```JAVA
 public CopyOnWriteArrayList() {
     //初始化一个长度为0的Object类型数组
     setArray(new Object[0]);
@@ -550,8 +529,7 @@ public CopyOnWriteArrayList() {
 
 有参构造
 
-```
-JAVA
+```JAVA
 //创建一个list，其内部元素是入参toCopyIn的副本    
 public CopyOnWriteArrayList(E[] toCopyIn) {
        setArray(Arrays.copyOf(toCopyIn, toCopyIn.length, Object[].class));
@@ -575,8 +553,7 @@ public CopyOnWriteArrayList(E[] toCopyIn) {
 
 `CopyOnWriteArrayList` 中用来添加元素的函数由 `add(E e)`、 `add(int index, E element)`、 `addIfAbsent(E e)` 和 `addAllAbsent(Collection<? extends E> c)` 等，他们原理类似，这里单拿 `add(E e)` 为例来讲解。
 
-```
-JAVA
+```JAVA
 public boolean add(E e) {
     //获取独占锁
     final ReentrantLock lock = this.lock;
@@ -614,8 +591,7 @@ public boolean add(E e) {
 
 使用 `E get(int index)` 获取下标为 index 的元素，如果元素不存在则抛出 `IndexOutOfBoundsException` 异常。
 
-```
-JAVA
+```JAVA
 private E get(Object[] a, int index) {
     return (E) a[index];
 }
@@ -641,8 +617,7 @@ public E get(int index) {
 
 使用 `E set(int index, E element)` 修改 list 中指定元素的值，如果指定位置的元素不存在则抛出 `IndexOutOfBoundsException` 异常。
 
-```
-JAVA
+```JAVA
 public E set(int index, E element) {
     //获取独占锁
     final ReentrantLock lock = this.lock;
@@ -684,8 +659,7 @@ public E set(int index, E element) {
 
 单独讲解 `reomve(int index)`
 
-```
-JAVA
+```JAVA
 public E remove(int index) {
     //获取独占锁
     final ReentrantLock lock = this.lock;
@@ -735,8 +709,7 @@ public E remove(int index) {
 
 `CopyOnWriteArrayList` 迭代器源码
 
-```
-JAVA
+```JAVA
   public Iterator<E> iterator() {
       return new COWIterator<E>(getArray(), 0);
   }
@@ -776,8 +749,7 @@ JAVA
 
 示例：
 
-```
-JAVA
+```JAVA
 public class ListTest {
     private static volatile CopyOnWriteArrayList<String> arrayList = new CopyOnWriteArrayList<>();
 
@@ -839,8 +811,7 @@ public class ListTest {
 
 如果调用 `park()` 方法的线程已经拿到了与 `LockSupport` 关联的许可证，则调用 `LockSupport.park()` 时会马上返回，否则调用线程会被禁止参与线程的调度，也就是会被阻塞挂起。
 
-```
-JAVA
+```JAVA
 public static void park() {
     UNSAFE.park(false, 0L);
 }
@@ -848,8 +819,7 @@ public static void park() {
 
 示例：
 
-```
-JAVA
+```JAVA
 @Test
 public void LockSupportTest(){
     System.out.println(" begin park !");
@@ -870,8 +840,7 @@ public void LockSupportTest(){
 
 修改代码如下。
 
-```
-JAVA
+```JAVA
 @Test
 public void LockSupportTest(){
     System.out.println(" begin park !");
@@ -888,8 +857,7 @@ public void LockSupportTest(){
 
 示例
 
-```
-JAVA
+```JAVA
 @Test
 public void LockSupportTest01() throws InterruptedException {
     Thread thread = new Thread(new Runnable() {
@@ -921,9 +889,8 @@ public void LockSupportTest01() throws InterruptedException {
 
 例如根据调用前后中断状态的对比就可以判断是不是因为被中断才返回的。
 
-```
-JAVA
-    @Test
+```JAVA
+	@Test
     public void LockSupportTest01() throws InterruptedException {
         Thread thread = new Thread(new Runnable() {
             @Override
@@ -967,8 +934,7 @@ JAVA
 >
 > **使用带 `blocker` 参数的 `park` 方法，线程堆栈可以提供更多有关阻塞对象的信息。**
 
-```
-JAVA
+```JAVA
 public static void park(Object blocker) {
     //获取调用线程
     Thread t = Thread.currentThread();
@@ -994,8 +960,7 @@ Thread 类里面有个变量 `volatile Object parkBlocker` ，**用来存放 `pa
 
 1. `void parkUntil(Object blocker, long deadline)`
 
-```
-JAVA
+```JAVA
 public static void parkUntil(Object blocker, long deadline) {
     Thread t = Thread.currentThread();
     setBlocker(t, blocker);
@@ -1011,8 +976,7 @@ public static void parkUntil(Object blocker, long deadline) {
 
 #### 示例分析
 
-```
-JAVA
+```JAVA
 public class FIFOMutex {
     private final AtomicBoolean locked = new AtomicBoolean(false);
     private final Queue<Thread> waiters = new ConcurrentLinkedDeque<>();
@@ -1110,9 +1074,9 @@ Node 节点内部的其他参数。
 
 在独占方式下，获取与释放资源的流程如下：
 
-```
-void acquire(int arg)
-JAVA
+`void acquire(int arg)`
+
+```JAVA
 //当一个线程调用 acquire(int arg) 方法获取独占锁资源时，会首先使用 tryAcquire 方法尝试获取资源
 //具体是设置状态变量 state 的值，成功则直接返回
 //失败则将当前线程封装为类型为 Node.EXCLUSIVE 的Node 节点后插入到 AQS 阻塞队列的尾部，并调用 LockSupport.park(this) 方法挂起自己
@@ -1145,9 +1109,9 @@ public final boolean release(int arg) {
 
 共享方式下，获取与释放锁的流程如下：
 
-```
-void acquireShared(int arg)
-JAVA
+`void acquireShared(int arg)`
+
+```JAVA
 //当线程调用 acquireShared(int arg)获取共享资源是，会首先使用 tryAcquireShared尝试获取资源，
 //具体是设置状态变量 state 的值，成功则直接返回，
 //失败则将当前线程封装为类型为 Node.SHARED 的Node 节点后插入到 AQS 阻塞队列的尾部，并使用LockSupport.park(this)方法挂起自己
@@ -1182,8 +1146,7 @@ public final boolean releaseShared(int arg) {
 
 - 入队操作：当一个线程获取锁失败后该线程会被转化为 Node 节点，然后就会使用 `enq(final Node node)`
 
-```
-JAVA
+```JAVA
 private Node enq(final Node node) {
     for (;;) {
         Node t = tail;
@@ -1217,9 +1180,8 @@ private Node enq(final Node node) {
 
 首先看一个例子。
 
-```
-JAVA
-@Test
+```JAVA
+   @Test
    public void AQSTest(){
        //创建一个独占锁ReentrantLock对象，ReentrantLock是基于 AQS 实现的锁
        ReentrantLock lock = new ReentrantLock();
@@ -1269,14 +1231,11 @@ JAVA
 
 `lock.newCondition()` 的作用其实是 new 了一个在 `AQS` 内部声明的 `ConditionObject` 对象，`ConditionObject` 是 `AQS` 的内部类，**可以访问 `AQS` 内部的变量（例如状态变量 state）和方法**。**在每个条件变量内部都维护了一个条件队列，用来存放调用条件变量的 `await()` 方法时被阻塞的线程**。注意**这个队列和 `AQS` 队列不是一回事**。
 
-```
-void await()
-```
+`void await()`
 
 当线程调用条件变量的 `await()` 方法时（必须线调用锁的 `lock` 方法获取锁），在内部会构造一个类型为 `Node.CONDITION` 的 node 节点，然后将该节点插入条件队列末尾，之后当前线程会释放获取的锁（也就是会操作锁对应的 state 变量的值），并被阻塞挂起。
 
-```
-JAVA
+```JAVA
 public final void await() throws InterruptedException {
     if (Thread.interrupted())
         throw new InterruptedException();
@@ -1303,8 +1262,7 @@ void signal()
 
 当另外一个线程调用条件变量的 `signal` 方法时（必须先获取锁），在内部会把条件队列里面对头的一个线程节点从条件队列里面移除并放入 `AQS` 的阻塞队列里面，然后激活这个线程。
 
-```
-JAVA
+```JAVA
 public final void signal() {
     if (!isHeldExclusively())
         throw new IllegalMonitorStateException();
@@ -1319,8 +1277,7 @@ public final void signal() {
 
 下面来看一个线程调用条件变量的 `await()` 方法而被阻塞后，如何将其放入条件队列。
 
-```
-JAVA
+```JAVA
 private Node addConditionWaiter() {
     Node t = lastWaiter;
     // If lastWaiter is cancelled, clean out.
@@ -1356,8 +1313,7 @@ private Node addConditionWaiter() {
 
 基于 `AQS` 实现一个**不可重入**的独占锁。
 
-```
-JAVA
+```JAVA
 /**
  * @author Devil
  * @since 2022-09-06-17:54
@@ -1456,8 +1412,7 @@ public class NonReentrantLock implements Lock, Serializable {
 
 从类图可以看到，`ReentrantLock` 最终还是通过 `AQS` 来实现的，并且根据参数来决定其内部是一个公平还是非公平锁，默认非公平锁。
 
-```
-JAVA
+```JAVA
 public ReentrantLock() {
     sync = new NonfairSync();
 }
@@ -1477,8 +1432,7 @@ public ReentrantLock(boolean fair) {
 
 如果锁当前没有被其他线程占用并且当前线程之前没有获取过该锁，则当前线程会获取到该锁，然后设置当前锁的拥有者为当前线程，并设置 `AQS` 状态值为 1，然后直接返回。**如果当前线程之前已经获取过该锁并且没有释放，则这次只是简单的把 `AQS` 内的状态值加 1 后返回。如果该锁已被其他线程持有，则调用该方法的线程会被放入 `AQS` 队列后阻塞挂起。**
 
-```
-JAVA
+```JAVA
 public void lock() {
     sync.lock();
 }
@@ -1488,8 +1442,7 @@ public void lock() {
 
 这里先看 `sync` 的子类 `NonfairSync` 的情况。
 
-```
-JAVA
+```JAVA
 final void lock() {
     //CAS 设置状态值
     if (compareAndSetState(0, 1))
@@ -1508,8 +1461,7 @@ final void lock() {
 
 先看 `NonfairSync` 中的实现。
 
-```
-JAVA
+```JAVA
 protected final boolean tryAcquire(int acquires) {
     return nonfairTryAcquire(acquires);
 }
@@ -1544,8 +1496,7 @@ final boolean nonfairTryAcquire(int acquires) {
 
 接下来我们来看看 `FairSync` 的 `tryAcquire` 方法实现。来看看公平是怎么体现的。
 
-```
-JAVA
+```JAVA
 protected final boolean tryAcquire(int acquires) {
     final Thread current = Thread.currentThread();
     int c = getState();
@@ -1574,8 +1525,7 @@ protected final boolean tryAcquire(int acquires) {
 
 `hasQueuePredcessors` 该方法也是实现公平性的核心代码
 
-```
-JAVA
+```JAVA
 public final boolean hasQueuedPredecessors() {
    	
     Node t = tail; // Read fields in reverse initialization order
@@ -1594,8 +1544,7 @@ public final boolean hasQueuedPredecessors() {
 
 该方法与 `lock()` 类似，区别在于它对中断进行响应。
 
-```
-JAVA
+```JAVA
 public void lockInterruptibly() throws InterruptedException {
     sync.acquireInterruptibly(1);
 }
@@ -1617,8 +1566,7 @@ public final void acquireInterruptibly(int arg)
 
 尝试获取锁，如果当前该锁没有被其他线程持有，则当前线程获取该锁并返回 true，否则返回 false。注意：该方法不会引起当前线程阻塞。
 
-```
-JAVA
+```JAVA
 public boolean tryLock() {
     return sync.nonfairTryAcquire(1);
 }
@@ -1649,8 +1597,7 @@ final boolean nonfairTryAcquire(int acquires) {
 
 尝试获取锁，与 `tryLock()` 不同之处在于，**它设置了超时时间，如果超时时间到了没有获取到锁则返回 false。**
 
-```
-JAVA
+```JAVA
 public boolean tryLock(long timeout, TimeUnit unit)
         throws InterruptedException {
     //调用AQS的tryAcquireNanos方法
@@ -1673,8 +1620,7 @@ public final boolean tryAcquireNanos(int arg, long nanosTimeout)
 
 **尝试释放锁，如果当前持有该锁，则调用该方法会让该线程对该线程持有的 `AQS` 状态值减 1，如果减去 1 后当前状态值为 0 ，则当前线程会释放该锁，否则仅仅减 1 而已。**如果当前线程没有持有该锁而调用了该方法则会抛出 `IllegalMonitorStateException` 异常。
 
-```
-JAVA
+```JAVA
 public void unlock() {
     //AQS 的 release 方法
     sync.release(1);
@@ -1729,8 +1675,7 @@ protected final boolean tryRelease(int releases) {
 
 > `ReetrantReadWriteLock` 很巧妙的使用了 `AQS` 的 state 状态，使用 state 的高16位标识读状态，低16位表示写状态。
 
-```
-JAVA
+```JAVA
 static final int SHARED_SHIFT   = 16;
 
 //共享锁（读锁）状态单位值 65536
@@ -1750,8 +1695,7 @@ static int exclusiveCount(int c) { return c & EXCLUSIVE_MASK; }
 
 其中 `firstReader` **用来记录第一个获取到读锁的线程**，`firstReaderHoldCount` 则**记录第一个获取到读锁的线程获取读锁的可重入次数**。`cachedHoldCounter` 用来**记录最后一个获取读锁的线程获取读锁的可重入次数**。
 
-```
-JAVA
+```JAVA
 static final class HoldCounter {
     int count = 0;
     // 线程id
@@ -1761,8 +1705,7 @@ static final class HoldCounter {
 
 `readHolds` 是 `ThreadLocal` 变量，**用来存放除去第一个获取读锁线程外的其他线程获取读锁的可重入次数**。`ThreadLocalHoldCounter` 继承了 `ThreadLocal`，因而 `initalValue` 方法返回一个 `HoldCounter` 对象。
 
-```
-JAVA
+```JAVA
 static final class ThreadLocalHoldCounter
     extends ThreadLocal<HoldCounter> {
     public HoldCounter initialValue() {
@@ -1779,8 +1722,7 @@ static final class ThreadLocalHoldCounter
 
 **写锁是个独占锁**，某时只有一个线程可以获取该锁。**如果当前没有线程获取到读锁和写锁，则当前线程可以获取到写锁然后返回。如果当前已经有线程获取到读锁或写锁，则当前请求写锁的线程会被阻塞挂起**。另外写锁是可重入锁，如果当前线程已经获取了该锁，再次获取只是简单地把可重入次数加 1 后直接返回。
 
-```
-JAVA
+```JAVA
 public void lock() {
     sync.acquire(1);
 }
@@ -1796,8 +1738,7 @@ public final void acquire(int arg) {
 
 如上代码，在 `lock()` 内部调用了 `AQS` 的 acquire 方法，其中 `tryAcquire` 是 `ReentrantReadWriteLock` 内部的 sync 类重写的，代码如下：
 
-```
-JAVA
+```JAVA
 protected final boolean tryAcquire(int acquires) {
     
     Thread current = Thread.currentThread();
@@ -1830,8 +1771,7 @@ protected final boolean tryAcquire(int acquires) {
 
 对于 `witerShouldBlock()` 方法，非公平锁的实现为
 
-```
-JAVA
+```JAVA
 final boolean writerShouldBlock() {
     return false; // writers can always barge
 }
@@ -1841,8 +1781,7 @@ final boolean writerShouldBlock() {
 
 公平锁实现为
 
-```
-JAVA
+```JAVA
 final boolean writerShouldBlock() {
     return hasQueuedPredecessors();
 }
@@ -1854,8 +1793,7 @@ final boolean writerShouldBlock() {
 
 类似于 `lock()` ，不同在于它会对中断进行响应。
 
-```
-JAVA
+```JAVA
 public void lockInterruptibly() throws InterruptedException {
     sync.acquireInterruptibly(1);
 }
@@ -1865,8 +1803,7 @@ public void lockInterruptibly() throws InterruptedException {
 
 尝试获取写锁，如果当前线程没有其他线程持有写锁或者读锁，则当前线程获取写锁会成功，然后返回 true。如果当前已经有其他线程持有写锁或者读锁则该方法直接返回false，且当前线程并不会被阻塞。如果当前线程已经持有该写锁则该方法直接返回false，且当前线并不会被阻塞。如果当前线程已经有了该写锁则简单增加 `AQS` 的状态值后返回 true。
 
-```
-JAVA
+```JAVA
 public boolean tryLock( ) {
     return sync.tryWriteLock();
 }
@@ -1895,8 +1832,7 @@ final boolean tryWriteLock() {
 
 与 `tryAcquire()` 不同之处在于，多了超时时间参数，如果尝试获取写锁失败则会把当前线程挂起指定时间，待超时时间到后当前线程被激活，如果还是没有获取到写锁则会返回 false。**另外该方法会对中断响应**。
 
-```
-JAVA
+```JAVA
 public boolean tryLock(long timeout, TimeUnit unit)
         throws InterruptedException {
     return sync.tryAcquireNanos(1, unit.toNanos(timeout));
@@ -1907,8 +1843,7 @@ public boolean tryLock(long timeout, TimeUnit unit)
 
 尝试释放锁，如果当前线程持有该锁，**调用该方法会让该线程对持有的 AQS 状态值减 1，如果减去 1 后当前状态值为 0 则当前线程会释放该锁，否则仅仅减一而已**，如果当前线程没有持有该锁而调用该方法则会抛出 `IllegalMonitorStateException` 异常。
 
-```
-JAVA
+```JAVA
 public void unlock() {
     sync.release(1);
 }
@@ -1949,8 +1884,7 @@ protected final boolean tryRelease(int releases) {
 
 获取读锁，如果当前没有其他线程持有写锁，则当前线程可以获取读锁，`AQS` 的状态值 state 的高 16 位的值会增加 1，然后方法返回。否则如果其他一个线程持有写锁，则当前线程会被阻塞。
 
-```
-JAVA
+```JAVA
 public void lock() {
     //调用 AQS 的AcquireShared 方法
     sync.acquireShared(1);
@@ -2013,8 +1947,7 @@ protected final int tryAcquireShared(int unused) {
 
 `readerShouldBlock` 再非公平锁中的实现
 
-```
-JAVA
+```JAVA
 final boolean readerShouldBlock() {
     return apparentlyFirstQueuedIsExclusive();
 }
@@ -2032,8 +1965,7 @@ final boolean apparentlyFirstQueuedIsExclusive() {
 
 如果 `readerShouldBlock` 返回 true 则说明有线程正在获取写锁，所以执行 `fullTryAcquireShared(current)`。`fullTryAcquireShared(current)` 代码与 `tryAcquireShared` 类似，它们的不同之处在于，前者通过循环自旋获取。
 
-```
-JAVA
+```JAVA
 final int fullTryAcquireShared(Thread current) {
     
     HoldCounter rh = null;
@@ -2110,8 +2042,7 @@ final int fullTryAcquireShared(Thread current) {
 
 类似与 `lock()` 方法，不同之处在于，该方法会对中断进行响应。
 
-```
-JAVA
+```JAVA
 public void lockInterruptibly() throws InterruptedException {
     sync.acquireSharedInterruptibly(1);
 }
@@ -2121,8 +2052,7 @@ public void lockInterruptibly() throws InterruptedException {
 
 **尝试获取锁，如果当前没有其他线程持有写锁，则当前线程获取读锁成功，**然后返回 true。**如果当前已经有其他线程持有写锁则该方法直接返回 false**，**但当前线程并不会被阻塞**。如果当前线程已经持有了该读锁则简单增加 `AQS` 的状态值的高 16 位后直接返回 true。
 
-```
-JAVA
+```JAVA
 public boolean tryLock() {
     //调用 sync 的 tryReadLock() 方法
     return sync.tryReadLock();
@@ -2170,8 +2100,7 @@ final boolean tryReadLock() {
 
 与 `tryLock()` 的不同之处在于，**多了超时时间参数，如果尝试获取读锁失败则会把当前线程挂起指定时间，待超时时间到了后当前线程被激活，如果此时还没有获取到锁则返回 false**。另外，该方法对中断响应。
 
-```
-JAVA
+```JAVA
 public boolean tryLock(long timeout, TimeUnit unit)
         throws InterruptedException {
     return sync.tryAcquireSharedNanos(1, unit.toNanos(timeout));
@@ -2188,8 +2117,7 @@ public final boolean tryAcquireSharedNanos(int arg, long nanosTimeout)
 
 1. `void unlock()`
 
-```
-JAVA
+```JAVA
 public void unlock() {
     //调用 AQS 的releaseShared方法
     sync.releaseShared(1);
@@ -2270,8 +2198,7 @@ protected final boolean tryReleaseShared(int unused) {
 
 Point 类里面有两个成员变量（x, y）用来表示一个点的二维坐标，和三个操作坐标变量的方法。另外实例化了一个 `StampedLock` 对象用来保证操作的原子性。
 
-```
-JAVA
+```JAVA
 class Point {
     //成员变量
     private double x, y;
@@ -2341,8 +2268,7 @@ class Point {
 
 使用乐观读锁还是很容易犯错误的，必须要小心，且必须要保证如下的使用顺序。
 
-```
-JAVA
+```JAVA
 long stamp = lock.tryOptimisticRead(); //非阻塞获取版本信息
 copyVaraibale2ThreadMemory(); //复制变量当线程的本地堆栈
 if (!lock.validate(stamp)){ //校验
@@ -2379,8 +2305,7 @@ useThreadMemoryVarables();//使用线程本地堆栈里面的数据进行操作
 
 `ConcurrentLinkedQueue` 内部的队列使用**单向链表**的方式实现，其中有两个 **volatile 类型的 Node 节点分别用来存放队列的首、尾结点**。从下面的无参构造函数可知，**默认头、尾结点都是指向 item 为 null 的哨兵节点**。新元素会被插入队列末尾，出队时从队列头部获取一个元素。
 
-```
-JAVA
+```JAVA
 public ConcurrentLinkedQueue() {
     head = tail = new Node<E>(null);
 }
@@ -2396,8 +2321,7 @@ public ConcurrentLinkedQueue() {
 
 offer 操作是在队列末尾添加一个元素，如果传递的参数是 null 则抛出 `NPE` 异常，否则由于 `ConcurrentLinkedQueue` 是无界队列，该方法一定会返回 true。另外由于使用 `CAS` 无阻塞算法，因此该方法不会阻塞挂起调用线程。
 
-```
-JAVA
+```JAVA
 public boolean offer(E e) {
     //(1)e为空则抛出异常
     checkNotNull(e);
@@ -2476,8 +2400,7 @@ public boolean offer(E e) {
 
 `add` 操作是在链表的末尾添加一个元素，其实在内部调用的还是 offer 操作。
 
-```
-JAVA
+```JAVA
 public boolean add(E e) {
     return offer(e);
 }
@@ -2487,8 +2410,7 @@ public boolean add(E e) {
 
 `poll` 操作是在队列头部获取并移除一个元素，如果队列为空则返回 null。
 
-```
-JAVA
+```JAVA
 public E poll() {
     //(1) goto标记
     restartFromHead:
@@ -2584,8 +2506,7 @@ IV. 现在 poll 的代码还有分支（7）没有执行过，那么什么时候
 
 1. `peek` 操作
 
-```
-JAVA
+```JAVA
 public E peek() {
     //(1) goto 标记
     restartFromHead:
@@ -2639,8 +2560,7 @@ peek 操作的代码结构与 poll 类似，不同之处在于代码（3）中�
 
 **计算当前队列元素个数，在并发环境下不是很有用，因为 `CAS` 没有加锁，所以从调用 size 函数到返回结果期间有可能增删元素，导致统计元素个数不精确。**
 
-```
-JAVA
+```JAVA
  public int size() {
      int count = 0;
      for (Node<E> p = first(); p != null; p = succ(p))
@@ -2680,8 +2600,7 @@ final Node<E> succ(Node<E> p) {
 
 **如果队列里面存在该元素则删除该元素，如果存在多个则删除第一个**，并返回true，否则返回false。
 
-```
-JAVA
+```JAVA
 public boolean remove(Object o) {
     //为空，则直接返回false
     if (o != null) {
@@ -2718,8 +2637,7 @@ public boolean remove(Object o) {
 
 判断队列里面是否含有指定队列，由于是遍历整个队列，所以像 `size` 操作一样结果也不是那么精准，有可能调用该方法时元素还在队列里面，但是遍历过程中其他线程才把该元素删除，那么就会返回 false。
 
-```
-JAVA
+```JAVA
 public boolean contains(Object o) {
     if (o == null) return false;
     for (Node<E> p = first(); p != null; p = succ(p)) {
@@ -2749,8 +2667,7 @@ offer 操作是在 tail 后面添加元素，也就是调用 `tail.casNext` 方�
 
 由类图可以看到，`LinkedBlockingQueue` 也是使用**单向链表实现**的，其也有两个 Node，**分别用来存放 首、尾节点**，并且还有一个**初始值为 0 的原子变量 count，用来记录队列元素个数。**另外还有两个 `ReentrantLock` 的实例，**分别用来控制元素入队和出队的原子性**，其中 `tackLock` 用来控制同时只有一个线程可以从队列头获取元素，其他线程必须等待，`putLock` 控制通知只能有一个线程可以获取锁，在队列尾部添加元素，其他线程必须等待。**另外，`notEmpty` 和 `notFull` 是条件变量，他们内部都有一个条件队列用来存放入队和出队时被阻塞的线程，其实这时生产者–消费者模型。**如下是独占锁的创建代码。
 
-```
-JAVA
+```JAVA
 //执行 take、poll等操作时需要获取该锁
 private final ReentrantLock takeLock = new ReentrantLock();
 
@@ -2772,8 +2689,7 @@ private final AtomicInteger count = new AtomicInteger();
 
 `LinkedBlockingQueue` 的无参构造函数
 
-```
-JAVA
+```JAVA
 @Native public static final int   MAX_VALUE = 0x7fffffff;
 
 public LinkedBlockingQueue() {
@@ -2796,8 +2712,7 @@ public LinkedBlockingQueue(int capacity) {
 
 向队列尾部插入一个元素，如果队列中有空闲则插入成功后返回 true，如果队列已满则丢弃当元素然后返回 false。如果 e 元素为 null 则抛出 `NullPointerException` 异常。另外该方法是不阻塞的。
 
-```
-JAVA
+```JAVA
 public boolean offer(E e) {
     
     //(1)元素为空则抛出空指针异常
@@ -2836,8 +2751,7 @@ public boolean offer(E e) {
 
 代码（7）处执行了 `signalNotEmpty`操作，我们来看看它的代码实现。
 
-```
-JAVA
+```JAVA
 private void signalNotEmpty() {
     final ReentrantLock takeLock = this.takeLock;
     takeLock.lock();
@@ -2859,8 +2773,7 @@ private void signalNotEmpty() {
 
 put 操作的代码结构与 offer 操作类似，代码如下。
 
-```
-JAVA
+```JAVA
 public void put(E e) throws InterruptedException {
     //(1) 如果元素e为空 则抛出空指针异常
     if (e == null) throw new NullPointerException();
@@ -2897,8 +2810,7 @@ public void put(E e) throws InterruptedException {
 
 从队列头部获取并移除一个元素，如果队列为空则返回 `nulll`，该方法是不阻塞的。
 
-```
-JAVA
+```JAVA
 public E poll() {
    
     final AtomicInteger count = this.count;
@@ -2946,8 +2858,7 @@ private E dequeue() {
 
 代码（6）说明移除队列元素前当前队列是满的，移除对头元素后当前元素至少有一个空闲位置，那么这是用可以调用 `signalNotFull` 激活因为调用 put 方法而被阻塞到 `notFull` 的条件队列里的一个线程。
 
-```
-JAVA
+```JAVA
 private void signalNotFull() {
     final ReentrantLock putLock = this.putLock;
     putLock.lock();
@@ -2965,8 +2876,7 @@ private void signalNotFull() {
 
 获取队列头部元素但是不从队列里面移除它，如果队列为空则返回 null。该方法是不阻塞的。
 
-```
-JAVA
+```JAVA
 public E peek() {
     //(1)判断当前队列是否还有元素 如果没有直接返回null
     if (count.get() == 0)
@@ -2993,8 +2903,7 @@ public E peek() {
 
 获取当前队列头部元素并从队列里面移除它。如果队列为空则阻塞当前线程直到队列不为空然后返回元素，如果在阻塞时被其他线程设置了中断标志，则被阻塞线程会抛出 `InterruptedException` 异常而返回。
 
-```
-JAVA
+```JAVA
 public E take() throws InterruptedException {
     E x;
     int c = -1;
@@ -3029,8 +2938,7 @@ public E take() throws InterruptedException {
 
 删除队列里面指定的元素，有则删除并返回 true，没有则返回 false。
 
-```
-JAVA
+```JAVA
 public boolean remove(Object o) {
     if (o == null) return false;
     
@@ -3058,8 +2966,7 @@ public boolean remove(Object o) {
 
 代码（1）通过 `fullyLock` 获取双重锁，获取后，其他线程进行入队或者出队操作时就会被阻塞挂起。
 
-```
-JAVA
+```JAVA
 void fullyLock(){
     putLock.lock();
     takeLock.lock();
@@ -3068,8 +2975,7 @@ void fullyLock(){
 
 代码（2）遍历队列寻找要删除的元素，找不到则直接返回 false，找到则执行 unlink 操作。
 
-```
-JAVA
+```JAVA
 void unlink(Node<E> p, Node<E> trail) {
     p.item = null;
     trail.next = p.next;
@@ -3085,8 +2991,7 @@ void unlink(Node<E> p, Node<E> trail) {
 
 代码（5）调用 `fullyUnlock` 方法使用与**加锁顺序相反的顺序释放双重锁**。
 
-```
-JAVA
+```JAVA
 void fullyUnlock(){
     takeLock.unlock();
     putLock.unlock();
@@ -3099,8 +3004,7 @@ void fullyUnlock(){
 
 获取当前队列元素个数。
 
-```
-JAVA
+```JAVA
 public int size() {
     return count.get();
 }
@@ -3126,8 +3030,7 @@ public int size() {
 
 另外，由于 `ArrayBlockingQueue` 是有界队列，所以构造函数必须传入队列大小参数。
 
-```
-JAVA
+```JAVA
 public ArrayBlockingQueue(int capacity) {
     this(capacity, false);
 }
@@ -3150,8 +3053,7 @@ public ArrayBlockingQueue(int capacity, boolean fair) {
 
 **向队列尾部插入一个元素，如果队列有空闲空间则插入成功并返回 true，如果队列已满则丢弃当前元素然后返回 false。**如果 e 元素尾 null 则抛出 `NullPointerException` 异常。另外该方法是不阻塞的。
 
-```
-JAVA
+```JAVA
 public boolean offer(E e) {
     //(1) e为null，则抛出异常
     checkNotNull(e);
@@ -3171,8 +3073,10 @@ public boolean offer(E e) {
         lock.unlock();
     }
 }
-void enqueue(E x)
-JAVA
+```
+`void enqueue(E x)`
+
+```JAVA
 private void enqueue(E x) {
     //(6) 元素入队
     final Object[] items = this.items;
@@ -3192,8 +3096,7 @@ private void enqueue(E x) {
 
 **向队列尾部插入一个元素，如果队列有空闲则插入后直接返回 true，如果队列已满则阻塞当前线程直到队列有空闲并插入成功后返回 true**，如果在阻塞时被其他线程设置了中断标志，则被阻塞线程会抛出 `IntrruptedException` 异常而返回。另外，如果 e 元素为 null 则抛出 `NullPointerException` 异常。
 
-```
-JAVA
+```JAVA
 public void put(E e) throws InterruptedException {
     //(1)
     checkNotNull(e);
@@ -3220,8 +3123,7 @@ public void put(E e) throws InterruptedException {
 
 **从队列头部获取并移除一个元素，如果队列为空则返回 null**，该方法是不阻塞的。
 
-```
-JAVA
+```JAVA
 public E poll() {
     final ReentrantLock lock = this.lock;
     //(1) 获取锁
@@ -3234,8 +3136,10 @@ public E poll() {
         lock.unlock();
     }
 }
-E dequeue()
-JAVA
+```
+`E dequeue()`
+
+```JAVA
 private E dequeue() {
    
     final Object[] items = this.items;
@@ -3264,8 +3168,7 @@ private E dequeue() {
 
 获取当前队列头部元素并从队列里面移除它。如果队列为空则阻塞当前线程直到队列不为空然后返回元素，如果在阻塞时被其他线程设置了中断标志，则被阻塞线程会抛出 `InterruptedException` 异常而返回。
 
-```
-JAVA
+```JAVA
 public E take() throws InterruptedException {
     
     //(1)获取锁
@@ -3290,8 +3193,7 @@ take 操作与 poll 相比只是代码（2）不同。**在这里如果队列为
 
 获取队列头部元素但是不从队列里面移除它，如果队列为空则返回 null，该方法是不阻塞的。
 
-```
-JAVA
+```JAVA
 public E peek() {
     
     //(1)获取锁
@@ -3318,8 +3220,7 @@ peek 的实现更简单，**首先获取独占锁，然后从数组 items 中获
 
 计算当前队列元素个数
 
-```
-JAVA
+```JAVA
 public int size() {
     final ReentrantLock lock = this.lock;
     lock.lock();
@@ -3355,8 +3256,7 @@ size 操作比较简单，获取锁后直接返回 count，并在返回前释放
 
 在如下构造函数种，**默认队列容量为 11**，**默认比较器为 null**，也就是使用元素的 `compareTo` 方法进行比较来确认元素的优先级，**这意味着队列元素必须实现 Comparable 接口。**
 
-```
-JAVA
+```JAVA
 private static final int DEFAULT_INITIAL_CAPACITY = 11;
 
 public PriorityBlockingQueue() {
@@ -3384,8 +3284,7 @@ public PriorityBlockingQueue(int initialCapacity,
 
 `offer` 操作的作用是在队列中插入一个元素，所以一直返回 true。
 
-```
-JAVA
+```JAVA
 public boolean offer(E e) {
     //如果元素为空 抛出异常
     if (e == null)
@@ -3423,8 +3322,7 @@ public boolean offer(E e) {
 
 以上代码的主流程比较简单，下面主要看看如何进行扩容和在内部建堆。首先看下面的扩容逻辑。
 
-```
-JAVA
+```JAVA
 private void tryGrow(Object[] array, int oldCap) {
     lock.unlock(); // 释放获取的锁
     Object[] newArray = null;
@@ -3475,8 +3373,7 @@ private void tryGrow(Object[] array, int oldCap) {
 
 然后看下面的具体建堆法。
 
-```
-JAVA
+```JAVA
 private static <T> void siftUpComparable(int k, T x, Object[] array) {
     Comparable<? super T> key = (Comparable<? super T>) x;
     //(7)队列元素个数大于0则判断插入位置，否则直接入队
@@ -3526,8 +3423,7 @@ IV. 第四次调用队列的 `offer(1)` 时，首先执行代码（1），从图
 
 `poll` 操作的作用是获取队列内部堆树的根节点元素，如果队列为空，则返回 null。
 
-```
-JAVA
+```JAVA
 public E poll() {
     final ReentrantLock lock = this.lock;
     lock.lock(); //获取独占锁
@@ -3541,8 +3437,7 @@ public E poll() {
 
 如上代码所示，**在进行出队操作时要先加锁**，这意味着，**当前线程再进行出队操作时，其他线程不能再进行入队和出队操作，但是前面再介绍 offer 函数时介绍过，这时候其他线程可以进行扩容。**下面看下具体执行出队操作的 dequeue 方法的代码：
 
-```
-JAVA
+```JAVA
 private E dequeue() {
     int n = size - 1;
     //队列为空则返回null
@@ -3569,8 +3464,7 @@ private E dequeue() {
 
 如上代码中，最重要的是，去掉堆的根节点后，如何使用剩下的节点重新调整一个最大或者最小堆。下面我们查看 `siftDownComparable` 的实现。
 
-```
-JAVA
+```JAVA
 private static <T> void siftDownComparable(int k, T x, Object[] array,
                                            int n) {
     if (n > 0) {
@@ -3647,8 +3541,7 @@ siftDownComparable
 
 put 操作内部调用的是 offer 操作，由于是无界队列，所以不需要阻塞。
 
-```
-JAVA
+```JAVA
 public void put(E e) {
     offer(e); // never need to block
 }
@@ -3658,8 +3551,7 @@ public void put(E e) {
 
 take 操作的作用是获取队列内部堆树的根节点元素，如果队列为空则阻塞，如以下代码所示。
 
-```
-JAVA
+```JAVA
 public E take() throws InterruptedException {
     //获取锁 可响应中断
     final ReentrantLock lock = this.lock;
@@ -3680,8 +3572,7 @@ public E take() throws InterruptedException {
 
 计算队列元素个数。如下代码在**返回 size 前加了锁**，以保证调用 size() 方法时不会有其他线程进行入队和出队操作。另外，由于 size 变量**没有被修饰为 volatile 的**，所以这里**加锁也保证了在多线程下 size 变量的内存可见性**。
 
-```
-JAVA
+```JAVA
 public int size() {
     final ReentrantLock lock = this.lock;
     lock.lock();
@@ -3709,8 +3600,7 @@ public int size() {
 
 由上图可知，`DelayQueue` 内部使用 `PriorityQueue` 存放数据，使用 `ReentrantLock` 实现线程同步。另外队列里面的元素要实现 Delayed 接口，**由于每个元素都有一个过期时间，所以要实现获知当前元素还剩下多少时间就过期了的接口，由于内部使用给优先级队列来实现，所以要实现元素之间相互比较的接口。**
 
-```
-JAVA
+```JAVA
 public interface Delayed extends Comparable<Delayed> {
     long getDelay(TimeUnit unit);
 }
@@ -3718,8 +3608,7 @@ public interface Delayed extends Comparable<Delayed> {
 
 在如下代码中，条件变量 available 与 lock 锁是对应的，其目的是为了实现线程间同步。
 
-```
-JAVA
+```JAVA
 private final Condition available = lock.newCondition();
 ```
 
@@ -3731,8 +3620,7 @@ private final Condition available = lock.newCondition();
 
 插入元素到队列，如果插入元素为 null 则抛出 `NullPointerException` 异常，否则由于是无界队列，所以一定返回 true。插入元素要实现 Delayed 接口。
 
-```
-JAVA
+```JAVA
 public boolean offer(E e) {
     //获取独占锁
     final ReentrantLock lock = this.lock;
@@ -3757,8 +3645,7 @@ public boolean offer(E e) {
 
 获取并移除延迟队列里面延迟时间过期的元素，如果队列里面没有过期元素则等待。
 
-```
-JAVA
+```JAVA
 public E take() throws InterruptedException {
     final ReentrantLock lock = this.lock;
     //首先获取独占锁 对中断响应
@@ -3810,8 +3697,7 @@ e 这时候就会重置 leader 线程为 null，并且激活条件队列里面�
 
 获取并移除队头过期元素，如果没有过期元素则返回 null。
 
-```
-JAVA
+```JAVA
 public E poll() {
     final ReentrantLock lock = this.lock;
     //获取独占锁
@@ -3835,8 +3721,7 @@ public E poll() {
 
 计算队列元素个数，包含过期的和没过期的。
 
-```
-JAVA
+```JAVA
 public int size() {
     final ReentrantLock lock = this.lock;
     //获取独占锁
@@ -3852,8 +3737,7 @@ public int size() {
 
 #### 案例介绍
 
-```
-JAVA
+```JAVA
 public class DelayQueueTest {
 
     static class DelayEle implements Delayed{
@@ -3961,8 +3845,7 @@ public class DelayQueueTest {
 
 这里假设 Integer 类型是 32 位二进制表示，则其中高三位用来表示线程池状态，后面 29 位用来记录线程池线程个数。
 
-```
-JAVA
+```JAVA
 //(高三位)用来记录表示线程池状态，（低29位）用来表示线程个数
 //默认是RUNNING状态，线程个数为0
 private final AtomicInteger ctl = new AtomicInteger(ctlOf(RUNNING, 0));
@@ -4028,8 +3911,7 @@ private static int ctlOf(int rs, int wc) { return rs | wc; }
 
 - `newFixedThreadPool`：**创建一个核心线程个数和最大线程个数都为 `nThreads` 的线程池，并且阻塞队列长度为 `Integer.MAX_VALUE`。`keeyAliveTime = 0` 说明只要线程个数比核心线程个数多并且当前空闲则回收。**
 
-```
-JAVA
+```JAVA
 public static ExecutorService newFixedThreadPool(int nThreads) {
     return new ThreadPoolExecutor(nThreads, nThreads,
                                   0L, TimeUnit.MILLISECONDS,
@@ -4047,8 +3929,7 @@ public static ExecutorService newFixedThreadPool(int nThreads, ThreadFactory thr
 
 - `newSingleThreadExecutor`：**创建一个核心线程个数和最大线程个数都为 1 的线程池，并且阻塞队列长度为 `Integer.MAX_VALUE`。`keeyAliveTime=0` 说明只要线程个数比核心线程个数多并且当前空闲则回收。**
 
-```
-JAVA
+```JAVA
 public static ExecutorService newSingleThreadExecutor() {
     return new FinalizableDelegatedExecutorService
         (new ThreadPoolExecutor(1, 1,
@@ -4068,8 +3949,7 @@ public static ExecutorService newSingleThreadExecutor(ThreadFactory threadFactor
 
 - `newCachedThreadPool`：**创建一个按需创建线程的线程池，初始线程个数为 0，最多线程个数为 `Integer.MAX_VALUE`，并且阻塞队列为同步队列。`keeyAliveTime = 60` 说明只要当前线程在 60s 内空闲则回收，这个类型的特殊之处在于，加入同步队列的任务会被马上执行，同步队列里面最多只有一个任务。**
 
-```
-JAVA
+```JAVA
 public static ExecutorService newCachedThreadPool() {
     return new ThreadPoolExecutor(0, Integer.MAX_VALUE,
                                   60L, TimeUnit.SECONDS,
@@ -4103,8 +3983,7 @@ public static ExecutorService newCachedThreadPool(ThreadFactory threadFactory) {
 
 用户线程提交任务的 `execute` 方法的具体代码如下。
 
-```
-JAVA
+```JAVA
 public void execute(Runnable command) {
     //(1) 如果任务为 null，则抛出NPE异常
     if (command == null)
@@ -4148,8 +4027,7 @@ public void execute(Runnable command) {
 
 下面分析下新增线程的 `addWorker` 方法。
 
-```
-JAVA
+```JAVA
 private boolean addWorker(Runnable firstTask, boolean core) {
     retry:
     for (;;) {
@@ -4232,8 +4110,7 @@ private boolean addWorker(Runnable firstTask, boolean core) {
 
 首先来分析第一部分的代码（6）
 
-```
-JAVA
+```JAVA
 //(6) 检查队列是否值在必要时为空
       if (rs >= SHUTDOWN &&
           ! (rs == SHUTDOWN &&
@@ -4244,8 +4121,7 @@ JAVA
 
 展开 ! 运算后等价于
 
-```
-JAVA
+```JAVA
 rs>=SHUTDOWN && 
     (rs != SHUTDOWN || //(I)
     firstTask!=null || //(II)
@@ -4268,8 +4144,7 @@ rs>=SHUTDOWN &&
 
 用户提交任务到线程池后，由 Worker 来执行。先看下 Worker 的构造函数。
 
-```
-JAVA
+```JAVA
 Worker(Runnable firstTask) {
     setState(-1); // 在调用runWorker前禁止中断
     this.firstTask = firstTask;
@@ -4279,8 +4154,7 @@ Worker(Runnable firstTask) {
 
 **构造函数中首先将 Worker 的状态设置为 -1，这是为了避免当前 Worker 在调用 `runWorker` 方法前被中断(防止任务在执行前被中断)**（当其他线程调用了线程池的 `shutdownNow` 时，如果 Worker 状态 >= 0 则会中断该线程）。这里设置了线程的状态为 -1，所以该线程就不会被中断了。在如下` runWorker` 代码中（开始执行任务），运行代码（9）时会调用 unlock 方法，该方法把 status 设置为了 0 所以这时候调用 `shutdownNow` 会中断 Worker 线程。
 
-```
-JAVA
+```JAVA
 //worker 对象的 run 方法
 public void run() {
     //实际调用的是 runWorker 方法
@@ -4339,8 +4213,7 @@ final void runWorker(Worker w) {
 
 代码（11）执行**清理任务**，其代码如下
 
-```
-JAVA
+```JAVA
 private void processWorkerExit(Worker w, boolean completedAbruptly) {
     
     ...
@@ -4383,8 +4256,7 @@ private void processWorkerExit(Worker w, boolean completedAbruptly) {
 
 调用 `shutdown` 方法后，**线程池就不会再接收新的任务了，但是工作队列里面的任务还是要执行的。该方法会立刻返回，并不等待任务完成后再返回。**
 
-```
-JAVA
+```JAVA
 public void shutdown() {
     final ReentrantLock mainLock = this.mainLock;
     mainLock.lock();
@@ -4412,8 +4284,7 @@ public void shutdown() {
 
 其中代码（13）的内容如下，如果当前线程池的状态 >= SHUTDOWN 则直接返回，否则设置为 SHUTDOWN 状态。
 
-```
-JAVA
+```JAVA
 private void advanceRunState(int targetState) {
     for (;;) {
         int c = ctl.get();
@@ -4426,8 +4297,7 @@ private void advanceRunState(int targetState) {
 
 代码（14）其**设置所有空闲线程的中断标志**。这里首先加了全局锁，同时只有一个线程可以调用 shutdown 方法设置中断标志。然后尝试获取 Worker 自己的锁，获取成功则设置中断标志。由于正在执行的任务已经获取了锁，所以正在执行的任务没有被中断。**这里的中断的是阻塞到 `getTask()` 方法并企图从队列里面获取任务的线程，也就是空闲线程。**
 
-```
-JAVA
+```JAVA
 private void interruptIdleWorkers() {
     interruptIdleWorkers(false);
 }
@@ -4490,8 +4360,7 @@ final void tryTerminate() {
 
 调用 `shutdownNow` 方法后，**线程池就不会再接收新的任务了，并且会丢弃工作队列里面的任务，正在执行的任务会被中断**，该方法会**立刻返回，并不等待激活的任务执行完成**。返回值为这时候队列里面**被丢弃的任务列表**。
 
-```
-JAVA
+```JAVA
 public List<Runnable> shutdownNow() {
     List<Runnable> tasks;
     final ReentrantLock mainLock = this.mainLock;
@@ -4511,8 +4380,7 @@ public List<Runnable> shutdownNow() {
 
 注意：代码（18）处中断所有线程，这里中断的线程包含**空闲线程**和**正在执行任务的线程**。
 
-```
-JAVA
+```JAVA
 private void interruptWorkers() {
     final ReentrantLock mainLock = this.mainLock;
     mainLock.lock();
@@ -4529,8 +4397,7 @@ private void interruptWorkers() {
 
 **当线程调用 `awaitTermination` 方法后，当前线程会被阻塞，直到线程池状态变为 TERMINATED 才返回，或者等待时间超时才返回。**
 
-```
-JAVA
+```JAVA
 public boolean awaitTermination(long timeout, TimeUnit unit)
     throws InterruptedException {
     long nanos = unit.toNanos(timeout);
@@ -4583,8 +4450,7 @@ public boolean awaitTermination(long timeout, TimeUnit unit)
 
 `ScheduledFutureTask` 是具有返回值的任务，继承自 `FutureTask`。`FutureTask` 内部有一个变量 state 用来表示任务的状态，一开始状态是 NEW，所有状态为
 
-```
-JAVA
+```JAVA
 private static final int NEW          = 0; //初始状态
 private static final int COMPLETING   = 1; //执行中状态
 private static final int NORMAL       = 2; //正常运行结束状态
@@ -4610,9 +4476,9 @@ ScheduleFutureTask 内部还有一个变量 period 用来表示任务的类型�
 - period 为负数，说明当前任务为 fixed-delay 任务，是固定延迟的定时可重复执行任务。
 - period 为正数，说明当前任务为 fixed-rate 任务，是固定频率的定时可重复执行任务。
 
-```
-ScheduledThreadPoolExecutor` 的一个构造函数如下，由该构造函数可知线程池队列是 `DelayWorkQueue
-JAVA
+
+`ScheduledThreadPoolExecutor` 的一个构造函数如下，由该构造函数可知线程池队列是 `DelayWorkQueue`
+```JAVA
 public ScheduledThreadPoolExecutor(int corePoolSize) {
     //调用父类 ThreadPoolExecutor 的构造函数
     super(corePoolSize, Integer.MAX_VALUE, 0, NANOSECONDS,
@@ -4637,8 +4503,7 @@ public ThreadPoolExecutor(int corePoolSize,
 
 该方法的作用是提交一个延迟执行的任务，任务从提交时间算起延迟单位为 unit 的 delay 时间后开始执行。提交的任务不是周期性惹我你，任务只会执行一次，代码如下。
 
-```
-JAVA
+```JAVA
 public ScheduledFuture<?> schedule(Runnable command,
                                    long delay,
                                    TimeUnit unit) {
@@ -4657,8 +4522,7 @@ public ScheduledFuture<?> schedule(Runnable command,
 
 代码（2）处任务转换。`ScheduleFutureTask` 是**具体放入延迟队列里面的东西**。由于是延迟队列，所以 `ScheduleFutureTask` 实现了 `long getDelay(TimeUnit unit)` 和 `int compareTo(Delayed other)` 方法。**`triggerTime` 方法将延迟时间转换为绝对时间，也就是把当前时间的纳米数加上延迟的纳米数后的 long 型值。** `ScheduleFutureTask` 的构造函数如下。
 
-```
-JAVA
+```JAVA
 ScheduledFutureTask(Runnable r, V result, long ns) {
     //调用父类的构造函数
     super(r, result);
@@ -4670,8 +4534,7 @@ ScheduledFutureTask(Runnable r, V result, long ns) {
 
 在构造函数内部手下调用了父类的 `FutureTask` 的构造函数，父类 `FutureTask` 的构造函数如下。
 
-```
-JAVA
+```JAVA
 public FutureTask(Runnable runnable, V result) {
     //通过适配器把 runnable 转换为 callable
     this.callable = Executors.callable(runnable, result);
@@ -4683,8 +4546,7 @@ public FutureTask(Runnable runnable, V result) {
 
 然后在 `ScheduleFutureTask` 构造函数内部设置 time 为上面说的**绝对时间**。需要注意，**这里 period 的值为 0，这说明当前任务为一次性的任务，不是定时反复执行任务**。其中 `long getDelay(TimeUnit unit)` 方法的代码如下（该方法用来计算当前任务还有多少时间就过期了）。
 
-```
-JAVA
+```JAVA
 //元素过期算法，装饰后时间-当前时间，就是即将过期剩余时间
 public long getDelay(TimeUnit unit) {
     return unit.convert(time - now(), NANOSECONDS);
@@ -4693,8 +4555,7 @@ public long getDelay(TimeUnit unit) {
 
 `compareTo(Delayed other)` 方法的代码如下:
 
-```
-JAVA
+```JAVA
 public int compareTo(Delayed other) {
     if (other == this) // compare zero if same object
         return 0;
@@ -4719,8 +4580,7 @@ public int compareTo(Delayed other) {
 
 III. 代码（3）将任务添加到延迟队列，delayedExecute 的代码如下。
 
-```
-JAVA
+```JAVA
 private void delayedExecute(RunnableScheduledFuture<?> task) {
     //（4）如果线程池关闭了，则执行线程池拒绝策略
     if (isShutdown())
@@ -4745,8 +4605,7 @@ IV. 可以看到代码（6）处添加完毕后会再次检查线程池是否被
 
 V. 如果代码（6）判断结果为 false，则会执行代码（7）确保至少有一个线程在处理任务，即使核心线程数 `corePoolSize` 被设置为 0 。`ensurePrestart` 的代码如下。
 
-```
-JAVA
+```JAVA
 void ensurePrestart() {
     //获取线程池中的线程个数
     int wc = workerCountOf(ctl.get());
@@ -4761,8 +4620,7 @@ void ensurePrestart() {
 
 下面我们来看线程池里面的线程如何获取并执行任务。在 `ThreadPoolExecutor` 里我们说过，具体执行任务的线程是 Worker 线程， Worker 线程调用具体任务的 run 方法来执行。由于这里的任务时 `ScheduleFutureTask`，所以我们下面看看 `ScheduledFutureTask` 的 run 方法。
 
-```
-JAVA
+```JAVA
 public void run() {
     //（8）是否只执行一次
     boolean periodic = isPeriodic();
@@ -4786,8 +4644,7 @@ public void run() {
 
 VI. 代码（8）中的 `isPeriodic` 的作用是判断当前任务是一次性任务还是可重复执行的任务，`isPeriodic` 的代码如下。
 
-```
-JAVA
+```JAVA
 public boolean isPeriodic() {
     //通过 period 的值来判断 是否执行一次还是重复执行
     return period != 0;
@@ -4796,8 +4653,7 @@ public boolean isPeriodic() {
 
 VII. 代码（9）判断当前任务是否应该被取消，`canRunInCurrentRunState` 的代码如下。
 
-```
-JAVA
+```JAVA
 boolean canRunInCurrentRunState(boolean periodic) {
     return isRunningOrShutdown(periodic ?
                                continueExistingPeriodicTasksAfterShutdown :
@@ -4809,8 +4665,7 @@ boolean canRunInCurrentRunState(boolean periodic) {
 
 VIII. 由于 periodic 的值为 false，所以执行代码（10）调用父类 `FutureTask` 的 run 方法具体执行任务。`FutureTask` 的 run 方法的代码如下。
 
-```
-JAVA
+```JAVA
 public void run() {
     //(12) 判断状态 如果任务状态不是 NEW 则直接返回，如果是 NEW 但是使用 CAS 设置当前任务的持有者为当前线程失败则返回
     if (state != NEW ||
@@ -4848,8 +4703,7 @@ public void run() {
 
 当任务执行成功则执行（13.2）修改任务状态，`set` 方法代码如下。
 
-```
-JAVA
+```JAVA
 protected void set(V v) {
     //如果当前任务的状态为 NEW，则用 CAS 算法设置为 COMPLETING  同时只会有一个线程修改成功
     if (UNSAFE.compareAndSwapInt(this, stateOffset, NEW, COMPLETING)) {
@@ -4868,8 +4722,7 @@ protected void set(V v) {
 
 如果任务执行失败，则执行代码（13.1）。`setException` 的代码如下，可见与 `set` 函数类似。
 
-```
-JAVA
+```JAVA
 protected void setException(Throwable t) {
     //如果当前任务的状态为 NEW，则设置为 COMPLETING
     if (UNSAFE.compareAndSwapInt(this, stateOffset, NEW, COMPLETING)) {
@@ -4890,8 +4743,7 @@ protected void setException(Throwable t) {
 
 该方法的作用时，**当任务执行完毕后，让其延迟固定时间再次运行（fixed-delay 任务）**。其中 `initialDelay` 表示**提交任务后延迟多少时间开始执行任务** `command`，`delay` 表示**当任务执行完毕后延长多少多少时间后再次运行 `command` 任务**，`unit` 时 `initialDelay` 和 delay 的**时间单位**。**任务会一直重复直到任务运行中抛出了异常，被取消了，或者关闭了线程池**。`scheduleWithFixedDelay` 的代码如下。
 
-```
-JAVA
+```JAVA
 public ScheduledFuture<?> scheduleWithFixedDelay(Runnable command,
                                                  long initialDelay,
                                                  long delay,
@@ -4920,8 +4772,7 @@ public ScheduledFuture<?> scheduleWithFixedDelay(Runnable command,
 
 将任务添加到延迟队列后线程池会从队列里面获取任务，然后调用 `ScheduledFutureTask` 的 run 方法执行。由于 period < 0 ，所以 `isPeriodic` 返回 true，所以执行代码（11）。`runAndReset()`
 
-```
-JAVA
+```JAVA
 protected boolean runAndReset() {
     //(17)
     if (state != NEW ||
@@ -4951,8 +4802,7 @@ protected boolean runAndReset() {
 
 该代码和 `FutureTask` 的 run 方法类似，**只是任务正常执行完毕后不会设置任务的状态，这样做是为了让任务成为可重复执行的任务**。这里多了代码（19），这段代码判断如果当前任务正常执行完毕并且任务状态为 NEW 则返回 `ture`，否则返回 false。如果返回 true 则执行代码（11.1）的 `setNextRunTime` 方法设置该任务下一次的执行时间。`setNextRunTime` 的代码如下。
 
-```
-JAVA
+```JAVA
 private void setNextRunTime() {
     long p = period;
     if (p > 0) //fixed-rate类型任务
@@ -4970,8 +4820,7 @@ private void setNextRunTime() {
 
 **该方法相对起始时间点以固定频率调用指定的任务（fixed-rate 任务）**。当把任务提交到线程池并延迟 `initialDelay` 时间（时间单位为 unit）后开始执行任务 command。**然后从 `initialDelay+period` 时间点再次执行，而后在 `initialDelay + 2 \* period` 时间点再次执行，循环往复，直到抛出异常或者调用了任务的 cancel 方法取消了 任务，或者关闭了线程池。**`scheduleAtFixedRate` 的原理与 `scheduleWithFixedDelay` 类似，下面我们讲下他们之间的不同点。
 
-```
-JAVA
+```JAVA
 public ScheduledFuture<?> scheduleAtFixedRate(Runnable command,
                                               long initialDelay,
                                               long period,
@@ -5008,8 +4857,7 @@ public ScheduledFuture<?> scheduleAtFixedRate(Runnable command,
 
 在日常开发中经常需要在主线程中开启多个线程去并行执行任务，并且主线程需要等待所有子线程完毕后再进行汇总的场景。在 `CountDownLathch` 出现之前一般都使用 join() 方法来实现这一点，但是 join 方法不够灵活，不能够满足不同场景的需求，所以 `JDK` 开发组提供 `CountDownLatch` 这个类，我们前面介绍的例子使用 `CountDownLatch` 会更优雅。
 
-```
-JAVA
+```JAVA
 public class JoinCountDownLatch {
 
     //创建 一个 CountDownLatch 实例 因为有两个子线程 所以构造函数的传参为2
@@ -5066,8 +4914,7 @@ public class JoinCountDownLatch {
 
 其实上面的代码还不够优雅，在项目实践中一般都避免直接操作线程，而是使用 `ExecutorService` 线程池来管理。使用 `ExecutorService` 时传递的参数是 Runnable 或者 Callable 对象，这时候你没有办法直接调用这些线程的 join() 方法，这就需要选择使用 `CountDownLatch` 了。将上面代码修改为如下：
 
-```
-JAVA
+```JAVA
 public class JoinCountDownLatch2 {
 
     //创建一个 CountDownLatch 实例
@@ -5131,8 +4978,7 @@ public class JoinCountDownLatch2 {
 
 从类图可以看出，`CountDownLatch` 时使用 `AQS` 实现的。通过下面的构造参数，你会发现，实际是把计数器的值赋给了 `AQS` 的状态变量 state，也就是这里使用 `AQS` 的状态值来表示计数器值。
 
-```
-JAVA
+```JAVA
 public CountDownLatch(int count) {
     if (count < 0) throw new IllegalArgumentException("count < 0");
     this.sync = new Sync(count);
@@ -5152,8 +4998,7 @@ Sync(int count) {
 - 当所有线程都调用了 `CountDownLatch` 对象的 `countDown` 方法后，也就是计数器的值为 0 时；
 - 其他线程调用了当前线程的 interrupt() 方法中断了当前线程，当前线程会抛出 `InterruptedException` 异常，然后返回。
 
-```
-JAVA
+```JAVA
 //CountDownLatch 的 await 方法
 public void await() throws InterruptedException {
     sync.acquireSharedInterruptibly(1);
@@ -5162,8 +5007,7 @@ public void await() throws InterruptedException {
 
 `CountDownLatch` 的 `await` 方法委托了 sync 调用了 `AQS` 的 `acquireSharedInterruptibly` 方法，后者的代码如下：
 
-```
-JAVA
+```JAVA
 // AQS 获取共享资源时可被中断的方法
 public final void acquireSharedInterruptibly(int arg)
         throws InterruptedException {
@@ -5190,8 +5034,7 @@ protected int tryAcquireShared(int acquires) {
 - 设置的 `timeout` 时间到了，因为超时而返回 false；
 - 其他线程调用了当前线程的 interrupt() 方法中断了当前线程，当前线程会抛出 `InterruptedException` 异常，然后返回。
 
-```
-JAVA
+```JAVA
 public boolean await(long timeout, TimeUnit unit)
     throws InterruptedException {
     return sync.tryAcquireSharedNanos(1, unit.toNanos(timeout));
@@ -5202,13 +5045,14 @@ public boolean await(long timeout, TimeUnit unit)
 
 线程调用该方法后，**计数器的值递减，递减后如果计数器值为 0 则唤醒所有因为调用 await 方法而被阻塞的线程，否则什么也不做。**
 
-```
-JAVA
+```JAVA
 public void countDown() {
     //委托 sync 调用 AQS 的方法
     sync.releaseShared(1);
 }
-JAVA
+```
+
+```JAVA
 //AQS 的方法
 public final boolean releaseShared(int arg) {
     //调用 sync 的实现的tryReleasesShared
@@ -5244,8 +5088,7 @@ protected boolean tryReleaseShared(int releases) {
 
 获取当前计数器的值，也就是 `AQS` 的 `state` 的值，一般在测试时使用该方法。
 
-```
-JAVA
+```JAVA
 public long getCount() {
     return sync.getCount();
 }
@@ -5265,8 +5108,7 @@ int getCount() {
 
 下面的例子中，我们实现的是，使用两个线程去执行一个被分解的任务A，当两个线程把自己的任务都执行完毕后再对他们的结果进行汇总处理。
 
-```
-JAVA
+```JAVA
 public class CyclicBarrierTest1 {
 
     //船舰一个CyclicBarrier实例，添加一个所有子线程全部达到屏障后执行的任务
@@ -5335,8 +5177,7 @@ public class CyclicBarrierTest1 {
 
 > 假设一个任务由阶段 1、阶段 2 和阶段 3 组成，每个线程都串行地执行阶段 1、阶段 2 和阶段 3 ，当多个线程执行该任务时，必须要保证所有线程的阶段 1 全部完成后才能进入阶段 2 执行，阶段 3 同理
 
-```
-JAVA
+```JAVA
 public class CyclicBarrierTest2 {
 
     //创建一个 CyclicBarrier 实例
@@ -5406,8 +5247,7 @@ public class CyclicBarrierTest2 {
 
 `CyclicBarrier` 构造函数
 
-```
-JAVA
+```JAVA
 //这里有两个变量 一个是线程个数 parties 另一个是一个任务，这个任务的执行时机是当所有线程都达到屏障点后。
 public CyclicBarrier(int parties, Runnable barrierAction) {
     if (parties <= 0) throw new IllegalArgumentException();
@@ -5421,8 +5261,7 @@ public CyclicBarrier(int parties, Runnable barrierAction) {
 
 最后**在变量内部有一个变量 broken ，其用来记录当前屏障是否被打破**。（注意：这里的 broken 并**没有被声明为 volatile 的**，因为**在锁内使用变量**，所以不需要声明）
 
-```
-JAVA
+```JAVA
 private static class Generation {
     boolean broken = false;
 }
@@ -5438,8 +5277,7 @@ private static class Generation {
 - 其他线程调用了当前线程的 interrupt() 方法中断了当前线程，则当前线程会抛出 interruptedException 异常而返回；
 - 与当前屏障点关联的 Generation 对象的 broken 标志被设置为 true 时，会抛出 `BrokenBarrierException` 异常，然后返回。
 
-```
-JAVA
+```JAVA
 public int await() throws InterruptedException, BrokenBarrierException {
     try {
         return dowait(false, 0L);
@@ -5460,8 +5298,7 @@ public int await() throws InterruptedException, BrokenBarrierException {
 - 其他线程调用了当前线程的 interrupt() 方法中断了当前线程，则当前线程会抛出 interruptedException 异常而返回；
 - 与当前屏障点关联的 Generation 对象的 broken 标志被设置为 true 时，会抛出 `BrokenBarrierException` 异常，然后返回。
 
-```
-JAVA
+```JAVA
 public int await(long timeout, TimeUnit unit)
     throws InterruptedException,
            BrokenBarrierException,
@@ -5476,8 +5313,7 @@ public int await(long timeout, TimeUnit unit)
 
 该方法实现了 `CyclicBarrier` 的核心功能。
 
-```
-JAVA
+```JAVA
 private int dowait(boolean timed, long nanos)
     throws InterruptedException, BrokenBarrierException,
            TimeoutException {
@@ -5539,8 +5375,7 @@ Semaphore 信号量也是 Java 中的一个**同步器**，与 `CountDownLatch` 
 
 同样下面的例子也是在主线程中开启两个子线程让他们执行，等所有子线程执行完毕后主线程再继续向下运行。
 
-```
-JAVA
+```JAVA
 public class SemaphoreTest {
 
     //创建一个 semaphore 实例
@@ -5594,8 +5429,7 @@ public class SemaphoreTest {
 
 下面举个例子来模拟 `CyclicBarrier` 复用的功能
 
-```
-JAVA
+```JAVA
 public class SemaphoreTest2 {
 
     //创建一个 Semaphore 实例
@@ -5688,8 +5522,7 @@ public class SemaphoreTest2 {
 
 下面的代码在创建 Semaphore 时会使用一个变量指定是否使用公平策略。
 
-```
-JAVA
+```JAVA
 public Semaphore(int permits) {
     sync = new NonfairSync(permits);
 }
@@ -5711,8 +5544,7 @@ Sync(int permits) {
 
 **当前线程调用该方法的目的是希望获取一个信号量资源。如果当前信号量个数大于 0， 当前信号量的计数会减 1，然后该方法直接返回。否则如果当前信号量个数等于 0， 则当前线程会被放入 `AQS` 阻塞队列**。当其他线程调用了当前线程的 interrupt() 方法中断了当前线程时，则当前线程会抛出 `InterruptedExecption` 异常返回。
 
-```
-JAVA
+```JAVA
 public void acquire() throws InterruptedException {
     //传递参数为1，说明要获取一个信号量资源
     sync.acquireSharedInterruptibly(1);
@@ -5733,8 +5565,7 @@ public final void acquireSharedInterruptibly(int arg)
 
 这里先讨论非公平策略 `NonfairSync` 类的 `tryAcquireShared` 方法。
 
-```
-JAVA
+```JAVA
 protected int tryAcquireShared(int acquires) {
     return nonfairTryAcquireShared(acquires);
 }
@@ -5759,8 +5590,7 @@ final int nonfairTryAcquireShared(int acquires) {
 
 下面来看公平策略实现的 `FairSync`
 
-```
-JAVA
+```JAVA
 protected int tryAcquireShared(int acquires) {
     for (;;) {
         if (hasQueuedPredecessors())
@@ -5780,8 +5610,7 @@ protected int tryAcquireShared(int acquires) {
 
 该方法与 `acquire()` 方法不同，**后者只需要获取一个信号量值，而前者则获取 permits 个。**
 
-```
-JAVA
+```JAVA
 public void acquire(int permits) throws InterruptedException {
     if (permits < 0) throw new IllegalArgumentException();
     sync.acquireSharedInterruptibly(permits);
@@ -5792,8 +5621,7 @@ public void acquire(int permits) throws InterruptedException {
 
 该方法与 `acquire()` 方法类似，不同之处在于该方法对中断不响应，也就是线程调用了 `acquireUninterruptibly()` 获取资源时（包含被阻塞后），其他线程调用了当前线程的 interrupt() 方法设置了当前线程的中断标志，此时当前线程并不会抛出 `InterruptedException` 异常而返回。
 
-```
-JAVA
+```JAVA
 public void acquireUninterruptibly() {
     sync.acquireShared(1);
 }
@@ -5803,8 +5631,7 @@ public void acquireUninterruptibly() {
 
 该方法与 `acquire(int permits)` 方法的不同之处在于，该方法对中断不响应。
 
-```
-JAVA
+```JAVA
 public void acquireUninterruptibly(int permits) {
     if (permits < 0) throw new IllegalArgumentException();
     sync.acquireShared(permits);
@@ -5815,8 +5642,7 @@ public void acquireUninterruptibly(int permits) {
 
 **该方法的作用是把当前 Semaphore 对象的信号量值增加 1**，如果当前有其他线程因为调用 `acquire` 方法而被阻塞而被放入了 `AQS` 的阻塞线程，则会**根据公平策略选择一个信号量个数能被满足的线程进行激活，激活的线程会尝试获取刚增加的信号量**。
 
-```
-JAVA
+```JAVA
 public void release() {
     //(1)arg = 1
     sync.releaseShared(1);
@@ -5855,8 +5681,7 @@ protected final boolean tryReleaseShared(int releases) {
 
 **该方法于不带参的 release 方法的不同之处在于，前者每次调用会在信号量值原来的基础上增加 permits，而后者每次增加 1。**
 
-```
-JAVA
+```JAVA
 public void release(int permits) {
     if (permits < 0) throw new IllegalArgumentException();
     sync.releaseShared(permits);
@@ -5885,6 +5710,5 @@ public void release(int permits) {
 
 一般配置同步日志打印时会在 `logback` 的 `xml` 文件里面配置如下内容。
 
-```
-XML
+```XML
 ```

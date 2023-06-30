@@ -48,8 +48,7 @@ Docker搭建`RabbitMQ`环境：[`RabbitMQ`环境搭建](https://devildyw.github.
 
 2. `pom.xml`
 
-   ```
-   XML
+   ```XML
    <?xml version="1.0" encoding="UTF-8"?>
    <project xmlns="http://maven.apache.org/POM/4.0.0"
             xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
@@ -123,8 +122,7 @@ Docker搭建`RabbitMQ`环境：[`RabbitMQ`环境搭建](https://devildyw.github.
 
 3. `application.yml`
 
-   ```
-   YML
+   ```YML
    server:
      port: 3366
    spring:
@@ -182,8 +180,7 @@ Docker搭建`RabbitMQ`环境：[`RabbitMQ`环境搭建](https://devildyw.github.
 
 1. `pom.xml`添加依赖`spring-boot-starter-amqp`
 
-   ```
-   XML
+   ```XML
    <dependency>
              <groupId>org.springframework.boot</groupId>
              <artifactId>spring-cloud-starter-bus-amqp</artifactId>
@@ -192,8 +189,7 @@ Docker搭建`RabbitMQ`环境：[`RabbitMQ`环境搭建](https://devildyw.github.
 
 2. `application.yml`添加`rabbitmq`相关配置
 
-   ```
-   YML
+   ```YML
    #rabbitmq配置
    spring:
      rabbitmq:
@@ -215,8 +211,7 @@ Docker搭建`RabbitMQ`环境：[`RabbitMQ`环境搭建](https://devildyw.github.
 
 1. `pom.xml`添加依赖`spring-boot-starter-amqp`
 
-   ```
-   XML
+   ```XML
    <dependency>
              <groupId>org.springframework.boot</groupId>
              <artifactId>spring-cloud-starter-bus-amqp</artifactId>
@@ -225,8 +220,7 @@ Docker搭建`RabbitMQ`环境：[`RabbitMQ`环境搭建](https://devildyw.github.
 
 2. `application.yml`添加`rabbitmq`相关配置
 
-   ```
-   YML
+   ```YML
    #rabbitmq配置
    spring:
      rabbitmq:
@@ -241,8 +235,7 @@ Docker搭建`RabbitMQ`环境：[`RabbitMQ`环境搭建](https://devildyw.github.
 
 1. `pom.xml`添加依赖`spring-boot-starter-amqp`
 
-   ```
-   XML
+   ```XML
    <dependency>
              <groupId>org.springframework.boot</groupId>
              <artifactId>spring-cloud-starter-bus-amqp</artifactId>
@@ -251,8 +244,7 @@ Docker搭建`RabbitMQ`环境：[`RabbitMQ`环境搭建](https://devildyw.github.
 
 2. `application.yml`添加`rabbitmq`相关配置
 
-   ```
-   YML
+   ```YML
    #rabbitmq配置
    spring:
      rabbitmq:
@@ -280,8 +272,7 @@ get:http://localhost:3355/configInfo
 
 结果
 
-```
-TEX
+```TEX
 master branch,springcloud-config/config-dev.yml version=4
 ```
 
@@ -294,7 +285,9 @@ master branch,springcloud-config/config-dev.yml version=4
 ```
 get:http://localhost:3366/configInfo
 get:http://localhost:3355/configInfo
-TEX
+```
+
+```TEX
 master branch,springcloud-config/config-dev.yml version=5
 ```
 
@@ -318,10 +311,13 @@ Spring Cloud Bus 的 **HTTP restful接口** 接受**“目标”**路径参数�
 
 ```
 get: http://localhost:3355/configInfo
-TEX
+```
+```TEX
 master branch,springcloud-config/config-dev.yml version=6
 get: http://localhost:3366/configInfo
-TEX
+```
+
+```TEX
 master branch,springcloud-config/config-dev.yml version=6
 ```
 
@@ -335,10 +331,14 @@ master branch,springcloud-config/config-dev.yml version=6
 
 ```
 get: http://localhost:3355/configInfo
-TEX
+```
+
+```TEX
 master branch,springcloud-config/config-dev.yml version=6
 get: http://localhost:3366/configInfo
-TEX
+```
+
+```TEX
 master branch,springcloud-config/config-dev.yml version=7
 ```
 

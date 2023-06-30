@@ -76,8 +76,7 @@
 
 [![image.png](https://ding-blog.oss-cn-chengdu.aliyuncs.com/images/202208121825334.png)](https://ding-blog.oss-cn-chengdu.aliyuncs.com/images/202208121825334.png)
 
-```
-SH
+```SH
 docker pull nacos/nacos-server:v2.1.0
 ```
 
@@ -89,8 +88,7 @@ docker pull nacos/nacos-server:v2.1.0
 
 从[Nacos数据库配置](https://github.com/alibaba/nacos/blob/develop/distribution/conf/nacos-mysql.sql)下载建表语句。也可以将下列语句粘贴执行
 
-```
-SQL
+```SQL
 /*
  * Copyright 1999-2018 Alibaba Group Holding Ltd.
  *
@@ -322,8 +320,7 @@ INSERT INTO roles (username, role) VALUES ('nacos', 'ROLE_ADMIN');
 
 > 是为了拿到`application.properties`等配置文件
 
-```
-SH
+```SH
 docker run -d \
 -e MODE=standalone \
 -e PREFER_HOST_MODE=hostname \
@@ -395,22 +392,19 @@ nacos/nacos-server:v2.1.0
 
 ##### 拷贝配置文件
 
-```
-SH
+```SH
 docker cp nacos:/home/nacos/conf/application.properties /home/docker/nacos/config/
 ```
 
 ##### 拷贝logback日志配置文件
 
-```
-SH
+```SH
 docker cp nacos:/home/nacos/conf/nacos-logback.xml /home/docker/nacos/config/
 ```
 
 ##### 修改application.properties的配置
 
-```
-PROPERTIES
+```PROPERTIES
 # spring
 server.servlet.contextPath=${SERVER_SERVLET_CONTEXTPATH:/nacos}
 server.contextPath=/nacos
@@ -465,16 +459,14 @@ nacos.security.ignore.urls=${NACOS_SECURITY_IGNORE_URLS:/,/error,/**/*.css,/**/*
 
 运行之前先删除之前启动的容器
 
-```
-SH
+```SH
 docker stop nacos
 docker rm nacos
 ```
 
 重新运行容器
 
-```
-SH
+```SH
 docker run -d \
 -e MODE=standalone \
 -p 8848:8848 \
@@ -510,8 +502,7 @@ nacos/nacos-server:v2.1.0
 
 在父工程中添加 `spring-cloud-alibaba-dependencies`得管理依赖
 
-```
-XML
+```XML
 <dependency>    
     <groupId>com.alibaba.cloud</groupId>
     <artifactId>spring-cloud-alibaba-dependencies</artifactId>
@@ -523,8 +514,7 @@ XML
 
 完整pom.xml依赖
 
-```
-XML
+```XML
 <?xml version="1.0" encoding="UTF-8"?>
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd">
@@ -651,8 +641,7 @@ XML
 
 新增pom.xml依赖，并且把原来的eureka的依赖删除或者注释掉。
 
-```
-XML
+```XML
 <!-- nacos客户端依赖 -->
 <dependency>
     <groupId>com.alibaba.cloud</groupId>
@@ -662,8 +651,7 @@ XML
 
 完整`pom.xml`依赖
 
-```
-XML
+```XML
 <?xml version="1.0" encoding="UTF-8"?>
 <project xmlns="http://maven.apache.org/POM/4.0.0"
          xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
@@ -733,8 +721,7 @@ XML
 
 `application.yml`新增nacos配置
 
-```
-YML
+```YML
 cloud:
   nacos:
     server-addr: ip:8848 # 注册中心地址
@@ -750,8 +737,7 @@ cloud:
 
 新增pom.xml依赖，并且把原来的eureka的依赖删除或者注释掉。
 
-```
-XML
+```XML
 <!-- nacos客户端依赖 -->
 <dependency>
     <groupId>com.alibaba.cloud</groupId>
@@ -761,8 +747,7 @@ XML
 
 完整`pom.xml`依赖
 
-```
-XML
+```XML
 <?xml version="1.0" encoding="UTF-8"?>
 <project xmlns="http://maven.apache.org/POM/4.0.0"
          xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
@@ -842,8 +827,7 @@ XML
 
 `application.yml`新增nacos配置
 
-```
-YML
+```YML
 cloud:
   nacos:
     server-addr: ip:8848 # 注册中心地址
@@ -889,8 +873,7 @@ cloud:
 
 我们可以通过修改`application.yml`文件来修改配置集群名称
 
-```
-YML
+```YML
 cloud:
   nacos:
     server-addr: ip:8848 # 注册中心地址
@@ -919,8 +902,7 @@ Nacos + Ribbon特有的策略
 
 > Spring Cloud Nacos 2021 版本开始已经禁止使用Ribbon做负载均衡了，而使用LoadBalancer有没有许多支持的策略，所以这里我们选择老版本的Spring Cloud Nacos 做演示。
 
-```
-XML
+```XML
 <dependency>
   <groupId>com.alibaba.cloud</groupId>
   <artifactId>spring-cloud-starter-alibaba-nacos-discovery</artifactId>
@@ -930,8 +912,7 @@ XML
 
 消费者添加如上依赖后，修改`application.yml`配置
 
-```
-YML
+```YML
 cloud-payment-service:
   ribbon:
     NFLoadBalancerRuleClassName: com.alibaba.cloud.nacos.ribbon.NacosRule # 负载均衡规则
@@ -1004,8 +985,7 @@ Nacos 数据模型 Key 由三元组唯一确认。
 
 而我们创建的服务注册到 Nacos 上默认都是在 public 这个命名空间下，想要修改就需要在`application.yml` 中添加如下配置。
 
-```
-YML
+```YML
 cloud:
   nacos:
     discovery:
@@ -1043,8 +1023,7 @@ Nacos对于临时实例采用心跳检测（即服务每个一段时间向 Nacos
 
 但是对于非临时实例 服务实例不再需要向 Nacos 发送心跳，而是Nacos主动询问节点是否存活。并且服务挂掉了也不会将其直接剔除，而是标记为不健康的实例。
 
-```
-YML
+```YML
 cloud:
   nacos:
     discovery:
@@ -1092,8 +1071,7 @@ Spring Cloud Alibaba Nacos 即有服务注册/发现的功能，又有配置管�
 
 1. 引入Nacos的配置管理客户端依赖
 
-```
-XML
+```XML
 <dependency>
     <groupId>com.alibaba.cloud</groupId>
     <artifactId>spring-cloud-starter-alibaba-nacos-config</artifactId>
@@ -1103,8 +1081,7 @@ XML
 
 1. 在resource目录添加一个bootstrap.yml文件，**这个文件是引导文件，优先级高于application.yml**，用来在引导配置管理中心的的信息，来获取配置：
 
-   ```
-   YML
+   ```YML
    spring:
      application:
        name: cloud-order-service #服务名称
@@ -1133,8 +1110,7 @@ XML
 
 2. 业务类
 
-   ```
-   JAVA
+   ```JAVA
    @Value("${pattern.dateformat}")
       private String dateFormat;
       
@@ -1146,8 +1122,7 @@ XML
 
 3. 启动后 访问对于接口
 
-   ```
-   JSON
+   ```JSON
    2022-08-14 11:56:48
    ```
 
@@ -1167,8 +1142,7 @@ Nacos中的配置文件变更后，微服务无需重启就可以感知。**与S
 
 在 @Value 注入的变量所在类上添加注解 @RefreshScope
 
-```
-JAVA
+```JAVA
 @Slf4j
 @RestController
 @RefreshScope
@@ -1188,15 +1162,16 @@ public class OrderController {
 
 使用@ConfigurationProperties注解
 
-```
-JAVA
+```JAVA
 @Component
 @Data
 @ConfigurationProperties(prefix = "pattern")
 public class PatternProperties {
     private String dateformat;
 }
-JAVA
+```
+
+```JAVA
 @Resource
 PatternProperties properties;
 
@@ -1237,8 +1212,7 @@ Nacos配置更改后，微服务可以实现热更新，方式：
 
 配置类
 
-```
-JAVA
+```JAVA
 @Component
 @Data
 @ConfigurationProperties(prefix = "pattern")
@@ -1251,8 +1225,7 @@ public class PatternProperties {
 
 业务类
 
-```
-JAVA
+```JAVA
 @Resource
 PatternProperties properties;
 
@@ -1265,8 +1238,7 @@ public PatternProperties properties(){
 
 结果
 
-```
-JSON
+```JSON
 {
     "dateformat": "yyyy-MM-dd  HH:mm:ss",
     "envSharedValue": "环境共享属性值"
@@ -1302,8 +1274,7 @@ JSON
 
 **方式一：**
 
-```
-YML
+```YML
 spring:
   application:
     name: cloud-order-service #服务名称
@@ -1325,8 +1296,7 @@ spring:
 
 **方式二：**
 
-```
-YML
+```YML
 spring:
   application:
     name: cloud-order-service #服务名称
@@ -1348,8 +1318,7 @@ spring:
 
 测试：
 
-```
-JSON
+```JSON
 {
     "dateformat": "yyyy-MM-dd HH:mm:ss",
     "envSharedValue": "环境共享属性值",

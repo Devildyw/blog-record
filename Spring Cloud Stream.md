@@ -98,8 +98,7 @@ Spring Cloud Stream 为一些供应商的消息中间件产品提供了个性化
 
 要使用 `RabbitMQ` binder，您可以使用以下 Maven 坐标将其添加到 Spring Cloud Stream 应用程序中：
 
-```
-XML
+```XML
 <dependency>
   <groupId>org.springframework.cloud</groupId>
   <artifactId>spring-cloud-starter-stream-rabbit</artifactId>
@@ -108,8 +107,7 @@ XML
 
 或者，您可以使用 Spring Cloud Stream RabbitMQ Starter，如下所示：
 
-```
-XML
+```XML
 <dependency>
   <groupId>org.springframework.cloud</groupId>
   <artifactId>spring-cloud-starter-stream-rabbit</artifactId>
@@ -211,61 +209,61 @@ XML
 
 另外，请记住，**绑定特定属性将在默认情况下覆盖其全局配置属性。**
 
-| 属性                          | 说明                                                         | 默认值                                                 |
-| ----------------------------- | ------------------------------------------------------------ | ------------------------------------------------------ |
-| *autoBindDlq*                 | 是否自动声明 DLQ（死信队列） 并将其绑定到 binder DLX（死信交换机）。 | `false`                                                |
-| *batchingEnabled*             | 是否启用生产者的消息批处理。消息根据以下属性（在此列表的下三个条目中描述）被批处理为一条消息：`batchSize` `batchBufferLimit`、 和`batchTimeout`。 | `false`                                                |
-| *batchSize*                   | 启用批处理时要缓冲的消息数。                                 | 100                                                    |
-| *batchBufferLimit*            | 启用批处理时的最大缓冲区大小。                               | 10000                                                  |
-| *batchTimeout*                | 启用批处理时的批处理超时。                                   | 5000                                                   |
-| *bindingRoutingKey*           | 将队列绑定到交换器的路由键（如果`bindQueue`是`true`）。可以是多个键 - 请参阅`bindingRoutingKeyDelimiter`。对于分区目标，`-<instanceIndex>`附加到每个键。 | `#`                                                    |
-| *bindingRoutingKeyDelimiter*  | 当该属性不为空时，`bindingRoutingKey` 被认为是由该值分隔的键列表；通常使用逗号。 | `null`                                                 |
-| *bindQueue*                   | 是否声明队列并将其绑定到目标交换机。如果您已经设置了自己的基础架构并且之前已经创建并绑定了队列，请将其设置为`false`。仅在`requiredGroups`提供时适用，然后仅适用于这些组。 | `true`                                                 |
-| *compress*                    | 发送时是否应压缩数据。                                       | `false`                                                |
-| *confirmAckChannel*           | 当 `errorChannelEnabled`为true时，向其发送肯定的交付确认（又名发布者确认）的通道。如果通道不存在，则`DirectChannel`使用此名称注册。连接工厂必须配置为`publisher confirms`为 `true` | `nullChannel`（`acks` are discarded）                  |
-| *deadLetterQueueName*         | DLQ（死信队列） 的名称仅在`requiredGroups`提供时适用，然后仅适用于这些组。 | `prefix+destination.dlq`                               |
-| *deadLetterExchange*          | 分配给队列的 DLX。仅当`autoBindDlq`是`true`时才相关。仅在`requiredGroups`提供时适用，然后仅适用于这些组。 | `prefix+DLX`                                           |
-| *deadLetterExchangeType*      | 分配给队列的 DLX。仅当`autoBindDlq`是`true`时才相关。仅在`requiredGroups`提供时适用，然后仅适用于这些组。 | `direct`                                               |
-| *deadLetterRoutingKey*        | 分配给队列的死信路由键。仅当`autoBindDlq`是`true`时才相关。仅在`requiredGroups`提供时适用，然后仅适用于这些组。 | `destination`                                          |
-| *declareDlx*                  | 是否为`destination`申报死信交换机。仅当`autoBindDlq`是`true`时才相关。如果您有预配置的 DLX，请设置为`false`。仅在`requiredGroups`提供时适用，然后仅适用于这些组。 | `true`                                                 |
-| *declareExchange*             | 是否为`destination`申报交换机                                | `true`                                                 |
-| *delayExpression*             | 一个 SpEL 表达式，用于评估应用于消息（`x-delay`标头）的延迟。如果交换机不是延迟消息交换机，则无效。 | 不设置x-delay标头                                      |
-| *delayedExchange*             | 是否将交易所声明为`Delayed Message Exchange`. 需要broker上安装延迟消息交换插件。将参数 `exchageType` 设置为 `x-delayed-type`。 | `false`                                                |
-| *deliveryMode*                | 消息持久化                                                   | `PERSISTENT`                                           |
-| *dlqBindingArguments*         | 将 dlq 绑定到死信交换时应用的参数；用于`headers` `deadLetterExchangeType`指定要匹配的标头。例如`…dlqBindingArguments.x-match=any`，`…dlqBindingArguments.someHeader=someValue`。仅在`requiredGroups`提供时适用，然后仅适用于这些组。 | 空                                                     |
-| *dlqDeadLetterExchange*       | 声明 DLQ 时，分配给该队列的 DLX。仅在`requiredGroups`提供时适用，然后仅适用于这些组。 | 无                                                     |
-| *dlqDeadLetterRoutingKey*     | 声明 DLQ 时，分配给该队列的死信路由键。仅在`requiredGroups`提供时适用，然后仅适用于这些组。 | 无                                                     |
-| *dlqExpires*                  | 删除超过该事件的未使用的死信队列（以毫秒为单位）。仅在`requiredGroups`提供时适用，然后仅适用于这些组。 | 不过期                                                 |
-| *dlqLazy*                     | 声明一个带有`x-queue-mode=lazy`参数的死信队列（即 **惰性死信队列**），考虑使用策略而不是此设置，因为使用策略允许在不删除队列的情况下更改设置。仅在`requiredGroups`提供时适用，然后仅适用于这些组。 | `false`                                                |
-| *dlqMaxLength*                | 死信队列中的最大消息数。仅在`requiredGroups`提供时适用，然后仅适用于这些组。 | 无限制                                                 |
-| *dlqMaxLengthBytes*           | 所有消息的死信队列中的最大总字节数。仅在`requiredGroups`提供时适用，然后仅适用于这些组。 | 无限制                                                 |
-| *dlqMaxPriority*              | 死信队列中消息的最大优先级 (0-255) 仅在`requiredGroups`提供时适用，然后仅适用于那些组。 | 无                                                     |
-| *dlqQuorum.deliveryLimit*     | 当`quorum.enabled=true`时，设置投递限制，超过该限制后，邮件将被丢弃或死信。仅在`requiredGroups`提供时适用，然后仅适用于这些组。 | 无 - 将应用代理默认值                                  |
-| *dlqQuorum.enabled*           | 如果为 true，则创建仲裁死信队列而不是普通队列。仅在`requiredGroups`提供时适用，然后仅适用于这些组。 | `false`                                                |
-| *dlqQuorum.initialQuorumSize* | 当`quorum.enabled=true`时，设置初始仲裁队列大小。仅在`requiredGroups`提供时适用，然后仅适用于这些组。 | 无 - 将应用代理默认值                                  |
-| *dlqSingleActiveConsumer*     | 设置为 true 将`x-single-active-consumer`队列属性设置为 true，即[单一活动消费者](https://www.cloudamqp.com/blog/rabbitmq-3-8-feature-focus-single-active-consumer.html)。仅在`requiredGroups`提供时适用，然后仅适用于这些组。 | `false`                                                |
-| *dlqTtl*                      | 声明时应用于死信队列的默认生存时间（以毫秒为单位）。仅在`requiredGroups`提供时适用，然后仅适用于这些组。 | 无限制                                                 |
-| *exchangeAutoDelete*          | 如果`declareExchange`为`true`，则交换机会被自动删除（即在最后一个队列被删除后删除）。 | `true`                                                 |
-| *exchangeDurable*             | 如果`declareExchange`为`true`，则交换机是持久的（即，它在broker重启后仍然存在）。 | `true`                                                 |
-| *exchangeType*                | 交换类型：`direct`, `fanout`,`headers`或`topic`用于非分区`destination`和`direct`, 标头或`topic`用于分区`destination`。 | `topic`                                                |
-| *expires*                     | 队列未使用被删除的时间（存活时间）                           | 不过期                                                 |
-| *headerPatterns*              | 标头模式                                                     | `['*']`所有标题                                        |
-| *lazy*                        | 是否用参数声明队列`x-queue-mode=lazy`，惰性队列，考虑使用策略而不是此设置，因为使用策略允许在不删除队列的情况下更改设置。仅在`requiredGroups`提供时适用，然后仅适用于这些组。 | `false`                                                |
-| *maxLength*                   | 普通队列中的最大消息数。仅在`requiredGroups`提供时适用，然后仅适用于这些组。 | 无限制                                                 |
-| *maxLengthBytes*              | 普通队列中所有消息的最大总字节数。仅在`requiredGroups`提供时适用，然后仅适用于这些组。 | 无限制                                                 |
-| *maxPriority*                 | 普通队列中消息的最大优先级 (0-255)。仅在`requiredGroups`提供时适用，然后仅适用于这些组。 | 无                                                     |
-| *prefix*                      | 要添加到`destination`交换机所名称的前缀。                    | ””                                                     |
-| *queueBindingArguments*       | 将队列绑定到交换器时应用的参数；用于`headers` `exchangeType`指定要匹配的标头。例如`…queueBindingArguments.x-match=any`，`…queueBindingArguments.someHeader=someValue`。仅在`requiredGroups`提供时适用，然后仅适用于这些组。 | 空                                                     |
-| *queueNameGroupOnly*          | 如果为 `true`，则从名称等于 `group` 的队列中消费。否则从队列名称为 `destination.group` 队列中消费。仅在`requiredGroups`提供时适用，然后仅适用于这些组。 | `false`                                                |
-| *quorum.deliveryLimit*        | 当`quorum.enabled=true`时，设置投递限制，超过该限制后，消息将被丢弃或死信。仅在`requiredGroups`提供时适用，然后仅适用于这些组。 | 无 - 将应用代理默认值                                  |
-| *quorum.enabled*              | 如果为 true，则创建仲裁队列而不是普通队列。仅在`requiredGroups`提供时适用，然后仅适用于这些组。 | `false`                                                |
-| *quorum.initialQuorumSize*    | 仅在`requiredGroups`提供时适用，然后仅适用于这些组。         | 无 - 将应用代理默认值。                                |
-| *routingKeyExpression*        | 一个 SpEL 表达式，用于确定发布消息时要使用的路由键。对于固定路由键，请使用`routingKey`. | `destination`或`destination-<partition>`用于分区目标。 |
-| *routingKey*                  | 定义发布消息时使用的固定路由键的字符串。                     | 见`routingKeyExpression`                               |
-| *singleActiveConsumer*        | 设置为 true 将`x-single-active-consumer`队列属性设置为 true。称为[单一活动消费者](https://www.cloudamqp.com/blog/rabbitmq-3-8-feature-focus-single-active-consumer.html)。仅在`requiredGroups`提供时适用，然后仅适用于这些组。 | `false`                                                |
-| *transacted*                  | 是否使用channel-transacted，即是否在消息中使用事务           | `false`                                                |
-| *ttl*                         | 声明时应用到队列的默认生存时间（以毫秒为单位）。仅在`requiredGroups`提供时适用，然后仅适用于这些组。 | 无限制                                                 |
-| *useConfirmHeader*            | 详情查看 [Publisher Confirms](https://github.com/spring-cloud/spring-cloud-stream-binder-rabbit#publisher-confirms). 与 `confirmAckChannel` 互斥。 |                                                        |
+| 属性                                                         | 说明                                                         | 默认值                                                 |
+| ------------------------------------------------------------ | ------------------------------------------------------------ | ------------------------------------------------------ |
+| *autoBindDlq*                                                | 是否自动声明 DLQ（死信队列） 并将其绑定到 binder DLX（死信交换机）。 | `false`                                                |
+| *batchingEnabled*                                            | 是否启用生产者的消息批处理。消息根据以下属性（在此列表的下三个条目中描述）被批处理为一条消息：`batchSize` `batchBufferLimit`、 和`batchTimeout`。 | `false`                                                |
+| *batchSize*                                                  | 启用批处理时要缓冲的消息数。                                 | 100                                                    |
+| *batchBufferLimit*                                           | 启用批处理时的最大缓冲区大小。                               | 10000                                                  |
+| *batchTimeout*                                               | 启用批处理时的批处理超时。                                   | 5000                                                   |
+| *bindingRoutingKey*                                          | 将队列绑定到交换器的路由键（如果`bindQueue`是`true`）。可以是多个键 - 请参阅`bindingRoutingKeyDelimiter`。对于分区目标，`-<instanceIndex>`附加到每个键。 | `#`                                                    |
+| *bindingRoutingKeyDelimiter*                                 | 当该属性不为空时，`bindingRoutingKey` 被认为是由该值分隔的键列表；通常使用逗号。 | `null`                                                 |
+| *bindQueue*                                                  | 是否声明队列并将其绑定到目标交换机。如果您已经设置了自己的基础架构并且之前已经创建并绑定了队列，请将其设置为`false`。仅在`requiredGroups`提供时适用，然后仅适用于这些组。 | `true`                                                 |
+| *compress*                                                   | 发送时是否应压缩数据。                                       | `false`                                                |
+| *confirmAckChannel*                                          | 当 `errorChannelEnabled`为true时，向其发送肯定的交付确认（又名发布者确认）的通道。如果通道不存在，则`DirectChannel`使用此名称注册。连接工厂必须配置为`publisher confirms`为 `true` | `nullChannel`（`acks` are discarded）                  |
+| *deadLetterQueueName*                                        | DLQ（死信队列） 的名称仅在`requiredGroups`提供时适用，然后仅适用于这些组。 | `prefix+destination.dlq`                               |
+| *deadLetterExchange*                                         | 分配给队列的 DLX。仅当`autoBindDlq`是`true`时才相关。仅在`requiredGroups`提供时适用，然后仅适用于这些组。 | `prefix+DLX`                                           |
+| *deadLetterExchangeType*                                     | 分配给队列的 DLX。仅当`autoBindDlq`是`true`时才相关。仅在`requiredGroups`提供时适用，然后仅适用于这些组。 | `direct`                                               |
+| *deadLetterRoutingKey*                                       | 分配给队列的死信路由键。仅当`autoBindDlq`是`true`时才相关。仅在`requiredGroups`提供时适用，然后仅适用于这些组。 | `destination`                                          |
+| *declareDlx*                                                 | 是否为`destination`申报死信交换机。仅当`autoBindDlq`是`true`时才相关。如果您有预配置的 DLX，请设置为`false`。仅在`requiredGroups`提供时适用，然后仅适用于这些组。 | `true`                                                 |
+| *declareExchange*                                            | 是否为`destination`申报交换机                                | `true`                                                 |
+| *delayExpression*                                            | 一个 SpEL 表达式，用于评估应用于消息（`x-delay`标头）的延迟。如果交换机不是延迟消息交换机，则无效。 | 不设置x-delay标头                                      |
+| *delayedExchange*                                            | 是否将交易所声明为`Delayed Message Exchange`. 需要broker上安装延迟消息交换插件。将参数 `exchageType` 设置为 `x-delayed-type`。 | `false`                                                |
+| *deliveryMode*                                               | 消息持久化                                                   | `PERSISTENT`                                           |
+| *dlqBindingArguments*                                        | 将 dlq 绑定到死信交换时应用的参数；用于`headers` `deadLetterExchangeType`指定要匹配的标头。例如`…dlqBindingArguments.x-match=any`，`…dlqBindingArguments.someHeader=someValue`。仅在`requiredGroups`提供时适用，然后仅适用于这些组。 | 空                                                     |
+| *dlqDeadLetterExchange*                                      | 声明 DLQ 时，分配给该队列的 DLX。仅在`requiredGroups`提供时适用，然后仅适用于这些组。 | 无                                                     |
+| *dlqDeadLetterRoutingKey*                                    | 声明 DLQ 时，分配给该队列的死信路由键。仅在`requiredGroups`提供时适用，然后仅适用于这些组。 | 无                                                     |
+| *dlqExpires*                                                 | 删除超过该事件的未使用的死信队列（以毫秒为单位）。仅在`requiredGroups`提供时适用，然后仅适用于这些组。 | 不过期                                                 |
+| *dlqLazy*                                                    | 声明一个带有`x-queue-mode=lazy`参数的死信队列（即 **惰性死信队列**），考虑使用策略而不是此设置，因为使用策略允许在不删除队列的情况下更改设置。仅在`requiredGroups`提供时适用，然后仅适用于这些组。 | `false`                                                |
+| *dlqMaxLength*                                               | 死信队列中的最大消息数。仅在`requiredGroups`提供时适用，然后仅适用于这些组。 | 无限制                                                 |
+| *dlqMaxLengthBytes*                                          | 所有消息的死信队列中的最大总字节数。仅在`requiredGroups`提供时适用，然后仅适用于这些组。 | 无限制                                                 |
+| *dlqMaxPriority*                                             | 死信队列中消息的最大优先级 (0-255) 仅在`requiredGroups`提供时适用，然后仅适用于那些组。 | 无                                                     |
+| *dlqQuorum.deliveryLimit*                                    | 当`quorum.enabled=true`时，设置投递限制，超过该限制后，邮件将被丢弃或死信。仅在`requiredGroups`提供时适用，然后仅适用于这些组。 | 无 - 将应用代理默认值                                  |
+| *dlqQuorum.enabled*                                          | 如果为 true，则创建仲裁死信队列而不是普通队列。仅在`requiredGroups`提供时适用，然后仅适用于这些组。 | `false`                                                |
+| *dlqQuorum.initialQuorumSize*                                | 当`quorum.enabled=true`时，设置初始仲裁队列大小。仅在`requiredGroups`提供时适用，然后仅适用于这些组。 | 无 - 将应用代理默认值                                  |
+| *dlqSingleActiveConsumer*                                    | 设置为 true 将`x-single-active-consumer`队列属性设置为 true，即[单一活动消费者](https://www.cloudamqp.com/blog/rabbitmq-3-8-feature-focus-single-active-consumer.html)。仅在`requiredGroups`提供时适用，然后仅适用于这些组。 | `false`                                                |
+| *dlqTtl*                                                     | 声明时应用于死信队列的默认生存时间（以毫秒为单位）。仅在`requiredGroups`提供时适用，然后仅适用于这些组。 | 无限制                                                 |
+| *exchangeAutoDelete*                                         | 如果`declareExchange`为`true`，则交换机会被自动删除（即在最后一个队列被删除后删除）。 | `true`                                                 |
+| *exchangeDurable*                                            | 如果`declareExchange`为`true`，则交换机是持久的（即，它在broker重启后仍然存在）。 | `true`                                                 |
+| *exchangeType*                                               | 交换类型：`direct`, `fanout`,`headers`或`topic`用于非分区`destination`和`direct`, 标头或`topic`用于分区`destination`。 | `topic`                                                |
+| xxxxxxxxxx curl -X POST "http://localhost:8080/actuator/shutdown"复制代码ARDUINO | 队列未使用被删除的时间（存活时间）                           | 不过期                                                 |
+| *headerPatterns*                                             | 标头模式                                                     | `['*']`所有标题                                        |
+| *lazy*                                                       | 是否用参数声明队列`x-queue-mode=lazy`，惰性队列，考虑使用策略而不是此设置，因为使用策略允许在不删除队列的情况下更改设置。仅在`requiredGroups`提供时适用，然后仅适用于这些组。 | `false`                                                |
+| *maxLength*                                                  | 普通队列中的最大消息数。仅在`requiredGroups`提供时适用，然后仅适用于这些组。 | 无限制                                                 |
+| *maxLengthBytes*                                             | 普通队列中所有消息的最大总字节数。仅在`requiredGroups`提供时适用，然后仅适用于这些组。 | 无限制                                                 |
+| *maxPriority*                                                | 普通队列中消息的最大优先级 (0-255)。仅在`requiredGroups`提供时适用，然后仅适用于这些组。 | 无                                                     |
+| *prefix*                                                     | 要添加到`destination`交换机所名称的前缀。                    | ””                                                     |
+| *queueBindingArguments*                                      | 将队列绑定到交换器时应用的参数；用于`headers` `exchangeType`指定要匹配的标头。例如`…queueBindingArguments.x-match=any`，`…queueBindingArguments.someHeader=someValue`。仅在`requiredGroups`提供时适用，然后仅适用于这些组。 | 空                                                     |
+| *queueNameGroupOnly*                                         | 如果为 `true`，则从名称等于 `group` 的队列中消费。否则从队列名称为 `destination.group` 队列中消费。仅在`requiredGroups`提供时适用，然后仅适用于这些组。 | `false`                                                |
+| *quorum.deliveryLimit*                                       | 当`quorum.enabled=true`时，设置投递限制，超过该限制后，消息将被丢弃或死信。仅在`requiredGroups`提供时适用，然后仅适用于这些组。 | 无 - 将应用代理默认值                                  |
+| *quorum.enabled*                                             | 如果为 true，则创建仲裁队列而不是普通队列。仅在`requiredGroups`提供时适用，然后仅适用于这些组。 | `false`                                                |
+| *quorum.initialQuorumSize*                                   | 仅在`requiredGroups`提供时适用，然后仅适用于这些组。         | 无 - 将应用代理默认值。                                |
+| *routingKeyExpression*                                       | 一个 SpEL 表达式，用于确定发布消息时要使用的路由键。对于固定路由键，请使用`routingKey`. | `destination`或`destination-<partition>`用于分区目标。 |
+| *routingKey*                                                 | 定义发布消息时使用的固定路由键的字符串。                     | 见`routingKeyExpression`                               |
+| *singleActiveConsumer*                                       | 设置为 true 将`x-single-active-consumer`队列属性设置为 true。称为[单一活动消费者](https://www.cloudamqp.com/blog/rabbitmq-3-8-feature-focus-single-active-consumer.html)。仅在`requiredGroups`提供时适用，然后仅适用于这些组。 | `false`                                                |
+| *transacted*                                                 | 是否使用channel-transacted，即是否在消息中使用事务           | `false`                                                |
+| *ttl*                                                        | 声明时应用到队列的默认生存时间（以毫秒为单位）。仅在`requiredGroups`提供时适用，然后仅适用于这些组。 | 无限制                                                 |
+| *useConfirmHeader*                                           | 详情查看 [Publisher Confirms](https://github.com/spring-cloud/spring-cloud-stream-binder-rabbit#publisher-confirms). 与 `confirmAckChannel` 互斥。 |                                                        |
 
 ### Publisher Confirms
 
@@ -273,8 +271,7 @@ XML
 
 3.1 版中添加的`preferred`机制是使用`correlation data header`并通过其属性 `Future<Confirm>` 等待结果。这对于批处理监听器特别有用，因为您可以在等待结果之前发送多条消息。要使用此技术，请将`useConfirmHeader`属性设置为 `true`。以下简单应用程序是使用此技术的示例：
 
-```
-PROPERTIES
+```PROPERTIES
 spring.cloud.stream.bindings.input-in-0.group=someGroup
 spring.cloud.stream.bindings.input-in-0.consumer.batch-mode=true
 
@@ -287,7 +284,9 @@ spring.cloud.stream.rabbit.bindings.input-in-0.consumer.batch-size=10
 
 spring.rabbitmq.publisher-confirm-type=correlated
 spring.rabbitmq.publisher-returns=true
-JAVA
+```
+
+```JAVA
 @SpringBootApplication
 public class Application {
 
@@ -381,8 +380,7 @@ class MyCorrelationData extends CorrelationData {
 
 从3.1版本开始，将消费者可以配置为将多个入站消息组装成一个批处理，该批处理作为`List<?>`转换后的有效负载呈现给应用程序。以下简单的应用程序演示了如何使用此技术：
 
-```
-PROPERTIES
+```PROPERTIES
 spring.cloud.stream.bindings.input-in-0.group=someGroup
 
 spring.cloud.stream.bindings.input-in-0.consumer.batch-mode=true #开启批处理模式
@@ -390,7 +388,9 @@ spring.cloud.stream.bindings.input-in-0.consumer.batch-mode=true #开启批处�
 spring.cloud.stream.rabbit.bindings.input-in-0.consumer.enable-batching=true #是否开启批处理
 spring.cloud.stream.rabbit.bindings.input-in-0.consumer.batch-size=10  #批处理大小
 spring.cloud.stream.rabbit.bindings.input-in-0.consumer.receive-timeout=200  #接收超时时间
-JAVA
+```
+
+```JAVA
 @SpringBootApplication
 public class Application {
 
@@ -446,7 +446,9 @@ public class Application {
     }
 
 }
-TEX
+```
+
+```TEX
 Received 2
 Thing [field=value1]
 Thing [field=value2]
@@ -512,8 +514,7 @@ Thing [field=value2]
 
 2. `pom.xml`
 
-   ```
-   XML
+   ```XML
    <?xml version="1.0" encoding="UTF-8"?>
    <project xmlns="http://maven.apache.org/POM/4.0.0"
             xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
@@ -632,8 +633,7 @@ Thing [field=value2]
 
 2. `pom.xml`
 
-   ```
-   XML
+   ```XML
    <?xml version="1.0" encoding="UTF-8"?>
    <project xmlns="http://maven.apache.org/POM/4.0.0"
             xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
@@ -720,8 +720,7 @@ Thing [field=value2]
 
 3. `application.yml`
 
-   ```
-   YML
+   ```YML
    server:
      port: 8801
    
@@ -764,8 +763,7 @@ Thing [field=value2]
 
    消息发送接口
 
-   ```
-   JAVA
+   ```JAVA
    package top.devildyw.springcloud.serivce;
    
    /**
@@ -779,8 +777,7 @@ Thing [field=value2]
 
    实现类
 
-   ```
-   JAVA
+   ```JAVA
    @Service
    @Slf4j
    public class IMessageProviderImpl implements IMessageProvider {
@@ -801,8 +798,7 @@ Thing [field=value2]
 
 6. 控制器类
 
-   ```
-   JAVA
+   ```JAVA
    import org.springframework.web.bind.annotation.GetMapping;
    import org.springframework.web.bind.annotation.RestController;
    import top.devildyw.springcloud.serivce.IMessageProvider;
@@ -828,8 +824,7 @@ Thing [field=value2]
 
 2. `pom.xml`
 
-   ```
-   XML
+   ```XML
    <?xml version="1.0" encoding="UTF-8"?>
    <project xmlns="http://maven.apache.org/POM/4.0.0"
             xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
@@ -914,8 +909,7 @@ Thing [field=value2]
 
 3. `application.yml`
 
-   ```
-   YML
+   ```YML
    server:
      port: 8803
    
@@ -948,8 +942,7 @@ Thing [field=value2]
 
 5. 业务类
 
-   ```
-   JAVA
+   ```JAVA
    import lombok.extern.slf4j.Slf4j;
    import org.springframework.context.annotation.Bean;
    import org.springframework.stereotype.Service;
@@ -1037,8 +1030,7 @@ Thing [field=value2]
 
 为每个消费者设置`group`，同一组的消费者group名称要相同。
 
-```
-YML
+```YML
 ......
 
 spring:

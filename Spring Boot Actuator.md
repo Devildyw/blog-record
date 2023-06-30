@@ -12,8 +12,7 @@ Actuator模块提供了一个监控和管理生产环境的模块，可以使用
 
 使用Spring Boot Actuator需要加入如下依赖：
 
-```
-XML
+```XML
 <dependency>
     <groupId>org.springframework.boot</groupId>
     <artifactId>spring-boot-starter-actuator</artifactId>
@@ -22,8 +21,7 @@ XML
 
 actuator并没有默认集成在自动配置中（所以需要手动引入），而在作为独立的项目来呈现的。当引入了上面的依赖，默认会引入actuator相关的两个项目：
 
-```
-XML
+```XML
 <dependency>
   <groupId>org.springframework.boot</groupId>
   <artifactId>spring-boot-actuator</artifactId>
@@ -38,8 +36,7 @@ XML
 
 需要注意：因`SpringBoot Actuator`会暴露服务的详细信息，为了保障安全性，建议添加安全控制的相关依赖`spring-boot-starter-security`，这样在访问应用监控端点时，都需要输入验证信息。所需依赖如下：
 
-```
-XML
+```XML
 <dependency>
     <groupId>org.springframework.boot</groupId>
     <artifactId>spring-boot-starter-security</artifactId>
@@ -50,8 +47,7 @@ XML
 
 关于security的使用我们在此不进行展开，可在application文件中配置相应的访问密码：
 
-```
-YAML
+```YAML
 spring:
   security:
     user:
@@ -63,8 +59,7 @@ spring:
 
 http://localhost:8080/actuator 访问，结果如下：
 
-```
-JSON
+```JSON
 {
     "_links": {
         "self": {
@@ -85,8 +80,7 @@ JSON
 
 默认支持的链接有：
 
-```
-PLAINTEXT
+```PLAINTEXT
 /actuator
 /actuator/health
 /actuator/health/{*path}
@@ -94,8 +88,7 @@ PLAINTEXT
 
 可以在application配置文件中配置开启更多的监控信息：
 
-```
-YML
+```YML
 management:
   info:
     env:
@@ -121,8 +114,7 @@ management:
 
 比如允许来自[https://www.choupangxia.com](https://www.choupangxia.com/) 域的GET和POST调用：
 
-```
-YAML
+```YAML
 management:
   endpoints:
     web:
@@ -168,8 +160,7 @@ health主要用来检查应用的运行状态，这是使用频次最高的监�
 
 默认情况下health的状态是开放的，访问：http://localhost:8080/actuator/health 即可看到应用的状态。
 
-```
-JSON
+```JSON
 {
     "status" : "UP"
 }
@@ -215,8 +206,7 @@ Health通过合并几个健康指数检查应用的健康情况。`SpringBoot Ac
 
 部分代码如下：
 
-```
-JSON
+```JSON
 {
     "contexts": {
         "application": {
@@ -243,8 +233,7 @@ JSON
 
 /info：就是在配置文件中配置的以info开头的信息，如配置为：
 
-```
-YAML
+```YAML
 info:
   app:
     name: spring-boot-actuator
@@ -253,8 +242,7 @@ info:
 
 返回结果：
 
-```
-JSON
+```JSON
 {
   "app":{
     "name":"spring-boot-actuator",
@@ -265,8 +253,7 @@ JSON
 
 info中配置的参数也可以通过符号*@*包围的属性值来自pom.xml文件中的元素节点。如下：
 
-```
-YAML
+```YAML
 info:
     build:
         artifact: @project.artifactId@
@@ -277,8 +264,7 @@ info:
 
 返回结果：
 
-```
-JSON
+```JSON
 {
     "build": {
         "artifact": "spring-learn",
@@ -291,8 +277,7 @@ JSON
 
 /beans：该端点用来获取应用上下文中创建的所有Bean。
 
-```
-KOTLIN
+```KOTLIN
 {
     "contexts": {
         "application": {
@@ -322,8 +307,7 @@ KOTLIN
 
 /configprops：该端点用来获取应用中配置的属性信息报告。
 
-```
-JSON
+```JSON
 {
     "spring.transaction-org.springframework.boot.autoconfigure.transaction.TransactionProperties": {
         "prefix": "spring.transaction",
@@ -336,8 +320,7 @@ JSON
 
 /mappings：该端点用来返回所有SpringMVC的控制器映射关系报告。
 
-```
-JSON
+```JSON
 {
   "handler": "Actuator web endpoint 'beans'",
   "predicate": "{GET /actuator/beans, produces [application/vnd.spring-boot.actuator.v2+json || application/json]}",
@@ -373,8 +356,7 @@ JSON
 
 /metrics：该端点用来返回当前应用的各类重要度量指标，比如：内存信息、线程信息、垃圾回收信息等。
 
-```
-JSON
+```JSON
 {
     "names": [
         "jvm.memory.max",
@@ -437,8 +419,7 @@ JSON
 
 /threaddump：会生成当前线程活动的快照。方便我们在日常定位问题的时候查看线程的情况。主要展示了线程名、线程ID、线程的状态、是否等待锁资源等信息。
 
-```
-JSON
+```JSON
 {
     "threads": [{
         "threadName": "Reference Handler",
@@ -502,22 +483,19 @@ JSON
 
 /shutdown：配置文件中配置开启此功能：
 
-```
-PROPERTIES
+```PROPERTIES
 management.endpoint.shutdown.enabled=true
 ```
 
 使用 curl 模拟 post 请求此接口：
 
-```
-ARDUINO
+```ARDUINO
 curl -X POST "http://localhost:8080/actuator/shutdown"复制代码
 ```
 
 显示结果为：
 
-```
-JSON
+```JSON
 {
     "message": "Shutting down, bye..."
 }

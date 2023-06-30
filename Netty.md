@@ -133,8 +133,7 @@ Netty 优点总结如下：
 
 导入 Netty 依赖即可。
 
-```
-XML
+```XML
 <!-- https://mvnrepository.com/artifact/io.netty/netty-all -->
 <dependency>
     <groupId>io.netty</groupId>
@@ -144,10 +143,9 @@ XML
 ```
 
 ### TimeServer
+`TimeServer.java`
 
-```
-TimeServer.java
-JAVA
+```JAVA
 package top.devildyw.netty.server;
 
 import io.netty.bootstrap.ServerBootstrap;
@@ -206,8 +204,9 @@ public class TimeServer {
     }
 
 }
-TimeServerHandler
-JAVA
+```
+`TimeServerHandler`
+```JAVA
 package top.devildyw.netty.server;
 
 import io.netty.buffer.ByteBuf;
@@ -260,9 +259,8 @@ public class TimeServerHandler extends ChannelInboundHandlerAdapter {
 
 ### TimeClient
 
-```
-TimeClient.java
-JAVA
+`TimeClient.java`
+```JAVA
 package top.devildyw.netty.client;
 
 import io.netty.bootstrap.Bootstrap;
@@ -315,8 +313,9 @@ public class TimeClient {
         }
     }
 }
-TimeClientHandler
-JAVA
+```
+`TimeClientHandler`
+```JAVA
 package top.devildyw.netty.client;
 
 import io.netty.buffer.ByteBuf;
@@ -436,8 +435,7 @@ TCP 是一个”**流**“协议，所谓流，就是没有界限的一大串的
 
 Netty 时间服务器服务端处理器 `TimeServerHandler.java`
 
-```
-JAVA
+```JAVA
 package top.devildyw.netty.stick_unpacking.server;
 
 import io.netty.buffer.ByteBuf;
@@ -488,8 +486,7 @@ public class TimeServerHandler extends ChannelInboundHandlerAdapter {
 
 Netty 时间服务器客户端 `TimeClientHandler.java`
 
-```
-JAVA
+```JAVA
 package top.devildyw.netty.stick_unpacking.client;
 
 import io.netty.buffer.ByteBuf;
@@ -589,9 +586,8 @@ Netty 默认提供了多种编解码器用于处理半包，只要能熟练掌�
 
 #### 支持 TCP 粘包的 TimeServer
 
-```
-TimeServer.java
-JAVA
+`TimeServer.java`
+```JAVA
 package top.devildyw.netty.slove_stick_unpacking.server;
 
 import io.netty.bootstrap.ServerBootstrap;
@@ -645,9 +641,9 @@ public class TimeServer {
 
 在原来的 TimeServerHandler 之前新增了两个解码器：第一个是 `LineBasedFrameDecoder`，第二个是 `StringDecoder`。
 
-```
-TimeServerHandler.java
-JAVA
+`TimeServerHandler.java`
+
+```JAVA
 package top.devildyw.netty.slove_stick_unpacking.server;
 
 import io.netty.buffer.ByteBuf;
@@ -691,9 +687,8 @@ public class TimeServerHandler extends ChannelInboundHandlerAdapter {
 
 #### 支持 TCP 粘包的 TimeClient
 
-```
-TimeClient.java
-JAVA
+`TimeClient.java`
+```JAVA
 package top.devildyw.netty.slove_stick_unpacking.client;
 
 import io.netty.bootstrap.Bootstrap;
@@ -742,9 +737,8 @@ public class TimeClient {
 
 同样是直接在 TimeClientHandler 之前新增 `LineBasedFrameDecoder` 和 `StringDecoder` 解码器。
 
-```
-TimeClientHandler.java
-JAVA
+`TimeClientHandler.java`
+```JAVA
 package top.devildyw.netty.slove_stick_unpacking.client;
 
 import io.netty.buffer.ByteBuf;
@@ -829,9 +823,8 @@ Echo 服务，EchoServer 接收到 EchoClient 的请求消息后，将其打印�
 
 #### 服务端
 
-```
-EchoServer.java
-JAVA
+`EchoServer.java`
+```JAVA
 /*...*/
 
 public class EchoServer {
@@ -875,9 +868,8 @@ public class EchoServer {
 
 `DelimiterBasedFrameDecoder` 有多个构造方法，这里我们传入两个参数，第一个 1024 表示**单条消息的长度**，当到达该长度后，仍然没有查找到分隔符，就抛出 `TooLongFrameException` 异常，**防止由于异常码流确实分隔符而导致的内存溢出，这是 Netty 解码器的可靠性保护**；第二个参数就是分隔符缓存对象。
 
-```
-EchoServerHandler.java
-JAVA
+`EchoServerHandler.java`
+```JAVA
 @ChannelHandler.Sharable //添加该注解可以将同一个ChannelHandler实例添加到多个 pipeline 中; 如果不添加则每次都要创建一个新的 ChannelHandler
 public class EchoServerHandler extends ChannelInboundHandlerAdapter {
 
@@ -908,8 +900,7 @@ public class EchoServerHandler extends ChannelInboundHandlerAdapter {
 
 #### 客户端
 
-```
-JAVA
+```JAVA
 /*...*/
 
 public class EchoClient {
@@ -951,8 +942,7 @@ public class EchoClient {
 
 与服务端类似，分别将 `DelimiterBasedFrameDecoder` 和 `StringDecoder` 添加到客户端 ChannelPipeline 中，最后添加客户端 I/O 事件处理类 `EchoClientHandler`。
 
-```
-JAVA
+```JAVA
 public class EchoClientHandler extends ChannelInboundHandlerAdapter {
 
 
@@ -1029,9 +1019,8 @@ public class EchoClientHandler extends ChannelInboundHandlerAdapter {
 
 在服务端的 `ChannelPipeline` 中新增 `FixedLengthFrameDecoder` ，长度设置为 20，然后依次增加字符串解码器和 `EchoServerHandler`。
 
-```
-EchoServer.java
-JAVA
+`EchoServer.java`
+```JAVA
 /*...*/
 
 public class EchoServer {
@@ -1072,9 +1061,8 @@ public class EchoServer {
 
 EchoServerHandler 的功能比较简单，直接将读取到的消息打印出来。
 
-```
-EchoServerHandler.java
-JAVA
+`EchoServerHandler.java`
+```JAVA
 /*...*/
 
 public class EchoServerHandler extends ChannelInboundHandlerAdapter {
@@ -1160,8 +1148,7 @@ Java 序列化技术是 Java 语言**内部的私有协议**，其他语言不�
 
 POJO 对象类 UserInfo 该类的实例就是我们要序列化的对象
 
-```
-JAVA
+```JAVA
 public class UserInfo implements Serializable {
     /**
     * 默认的序列号
@@ -1218,9 +1205,8 @@ UserInfo 对象是一个普通的 POJO 对象，它实现了 java.io.Serializabl
 
 在该类的 `codeC()` 方法中，我们使用 ByteBuffer 的通用二进制编解码技术对 UserInfo 对象进行了编码，编码结果仍然是 byte 数组。可以与传统的 JDK 序列化后的码流大小进行对比。
 
-```
-TestUserInfo.java
-JAVA
+`TestUserInfo.java`
+```JAVA
 public class TestUserInfo {
 
     public static void main(String[] args) throws IOException {
@@ -1255,9 +1241,9 @@ JDK 序列化机制编码后的二进制数组大小竟然是二进制编码 5.x
 
 修改代码为如下：
 
-```
-UserInfo.java
-JAVA
+`UserInfo.java`
+
+```JAVA
 public class UserInfo implements Serializable {
     private static final long serialVersionUID = 1L;
 
@@ -1305,8 +1291,9 @@ public class UserInfo implements Serializable {
     }
 
 }
-TestUserInfo.java
-JAVA
+```
+`TestUserInfo.java`
+```JAVA
 public class TestUserInfo {
 
     public static void main(String[] args) throws IOException {
@@ -1439,8 +1426,7 @@ JBoss Marshalling 是一个 Java 对象的序列化 API 包，**修正了 JDK �
 
 `SubscribeReq` 消息定义：
 
-```
-JAVA
+```JAVA
 @Data
 public class SubscribeReq implements Serializable {//继承 java.io.Serializable 接口
     /**
@@ -1465,8 +1451,7 @@ public class SubscribeReq implements Serializable {//继承 java.io.Serializable
 
 `SubscibeResp` 消息定义：
 
-```
-JAVA
+```JAVA
 @Data
 public class SubscribeResp implements Serializable {
 
@@ -1494,8 +1479,7 @@ public class SubscribeResp implements Serializable {
 
 订购服务主函数 `SubReqServer`
 
-```
-JAVA
+```JAVA
 public class SubReqServer {
     public void bind(int port) throws InterruptedException {
         //配置服务端的 NIO 线程组
@@ -1547,9 +1531,8 @@ public class SubReqServer {
 >
 > **`ObjectEncoder`** ，它可以在消息发送的时候自动将实现 Serializable 接口的 POJO 对象进行**编码**，因此用户无需亲自对对象进行手工序列化，只需要关注自己的业务逻辑即可。
 
-```
-SubReqServerHandler
-JAVA
+`SubReqServerHandler`
+```JAVA
 public class SubReqServerHandler extends ChannelInboundHandlerAdapter {
     @Override
     public void channelRead(ChannelHandlerContext ctx, Object msg) throws Exception {
@@ -1588,8 +1571,7 @@ public class SubReqServerHandler extends ChannelInboundHandlerAdapter {
 
 产品订购客户端 **客户端**
 
-```
-JAVA
+```JAVA
 public class SubReqClient {
     public void connect(String host, int port) throws InterruptedException {
         //配置客户端 NIO 线程组
@@ -1635,9 +1617,8 @@ public class SubReqClient {
 
 > 这里我们禁止了对类加载器的缓存，它在基于 OSGI 的动态模块化编程中经常使用。由于 OSGI 的bundle 可以进行热部署和热升级，当某个 bundle 升级后，它对应的类加载器也将一同升级，因此**在动态模块化编程过程中，很少对某个类加载器进行缓存，因为它随时可能发生变化。**
 
-```
-SubReqClientHandler
-JAVA
+`SubReqClientHandler`
+```JAVA
 public class SubReqClientHandler extends ChannelInboundHandlerAdapter {
     @Override
     public void channelActive(ChannelHandlerContext ctx) throws Exception {
@@ -1703,8 +1684,7 @@ https://github.com/protocolbuffers/protobuf/releases
 
 再 Maven 项目的 pom.xml 中配置如下，即可免去手动编译，通过插件来编译更为方便。
 
-```
-XML
+```XML
 <dependencies>
     <dependency>
         <groupId>io.netty</groupId>
@@ -1717,7 +1697,8 @@ XML
         <version>3.19.6</version>
     </dependency>
 </dependencies>
-XML
+```
+```XML
 <build>
     <plugins>
         <plugin>
@@ -1752,10 +1733,9 @@ XML
 protoc.exe 工具主要根据 .proto 文件生成代码，下面我们定义 SubscribeReq.ptoto 和 SubsrcibeResp.proto 来测试生成代码。
 
 数据文件定义如下：
+`SubscribeReq.proto`
 
-```
-SubscribeReq.proto
-JAVA
+```JAVA
 syntax = "proto3";
 option java_package = "top.devildyw.netty.serialization.protobuf.POJO";
 option java_multiple_files = true;
@@ -1798,8 +1778,7 @@ message SubscribeResp{
 
 Protobuf 的类库使用比较简单，下面就通过 SubscribeReqProto 进行编解码来介绍。
 
-```
-JAVA
+```JAVA
 public class TestSubscribeReqProto {
     private static byte[] encode(SubscribeReq req){
         return req.toByteArray();
@@ -1851,8 +1830,7 @@ public class TestSubscribeReqProto {
 
 #### Protobuf 版本的图书订购服务端开发
 
-```
-JAVA
+```JAVA
 public class SubReqServer {
     public void bind(int port) throws InterruptedException {
         //配置服务端的 NIO 线程组
@@ -1902,9 +1880,8 @@ public class SubReqServer {
 
 在 channelPipeline 中我们添加了 `ProtobufVarint32FrameDecoder`，它主要用于半包处理，随后继续添加 `ProtobufDecoder` 解码器，它的参数是 `com.google.protobuf.MessageLite`，实际上是要告诉 ProtobufDecoder 需要**解码的目标是什么**。
 
-```
-SubReqServerHandler
-JAVA
+`SubReqServerHandler`
+```JAVA
 public class SubReqServerHandler extends ChannelInboundHandlerAdapter {
     @Override
     public void channelRead(ChannelHandlerContext ctx, Object msg) throws Exception {
@@ -1936,9 +1913,8 @@ public class SubReqServerHandler extends ChannelInboundHandlerAdapter {
 
 #### Protobuf 版本的图书订购客户端开发
 
-```
-SubReqClient
-JAVA
+`SubReqClient`
+```JAVA
 public class SubReqClient {
     public void connect(String host, int port) throws InterruptedException {
         //配置客户端 NIO 线程组
@@ -1984,9 +1960,8 @@ public class SubReqClient {
 
 与服务端一样需要在 ChannelPipeline 中添加 Protobuf 相关的半包处理器，编/解码器，需要配置对什么消息对象进行解码。
 
-```
-SubReqClientHandler
-JAVA
+`SubReqClientHandler`
+```JAVA
 public class SubReqClientHandler extends ChannelInboundHandlerAdapter {
     @Override
     public void channelActive(ChannelHandlerContext ctx) throws Exception {
@@ -2072,8 +2047,7 @@ Netty 的 HTTP 协议栈无论在性能还是可靠性上，都表现优异，�
 
 #### HTTP 服务端开发
 
-```
-JAVA
+```JAVA
 public class HttpFileServer {
 
     private static final String DEFAULT_URL = "";
@@ -2116,8 +2090,9 @@ public class HttpFileServer {
         }
     }
 }
-HttpFileServerHandler
-JAVA
+```
+`HttpFileServerHandler`
+```JAVA
 import javax.activation.MimetypesFileTypeMap;
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -2439,8 +2414,7 @@ public class HttpFileServerHandler extends SimpleChannelInboundHandler<FullHttpR
 
 > 这里的 JSON 序列化框架使用 fastjson2.
 >
-> ```
-> XML
+> ```XML
 > <dependency>
 >     <groupId>com.alibaba.fastjson2</groupId>
 >     <artifactId>fastjson2</artifactId>
@@ -2452,9 +2426,8 @@ public class HttpFileServerHandler extends SimpleChannelInboundHandler<FullHttpR
 
 **POJO 对象定义**
 
-```
-Order
-JAVA
+`Order`
+```JAVA
 @Data
 public class Order {
 
@@ -2472,8 +2445,9 @@ public class Order {
 
 
 }
-Customer
-JAVA
+```
+`Customer`
+```JAVA
 @Data
 public class Customer {
     /**
@@ -2489,8 +2463,9 @@ public class Customer {
 
 
 }
-Address
-JAVA
+```
+`Address`
+```JAVA
 @Data
 public class Address {
     private String street1;
@@ -2505,8 +2480,9 @@ public class Address {
 
     private String country;
 }
-Shipping
-JAVA
+```
+`Shipping`
+```JAVA
 public enum Shipping {
     STANDARD_MAIL, PRIORITY_MAIL, INTERNATIONAL_MAIL, DOMESTIC_EXPRESS, INTERNATIONAL_EXPRESS
 }
@@ -2538,9 +2514,8 @@ public class OrderFactory {
 
 **HTTP + JSON 请求消息编码类**
 
-```
-AbstractHttpJsonEncoder
-JAVA
+`AbstractHttpJsonEncoder`
+```JAVA
 public abstract class AbstractHttpJsonEncoder<T> extends MessageToMessageEncoder<T> {
     final static String CHARSET_NAME = "UTF-8";
 
@@ -2562,8 +2537,9 @@ public abstract class AbstractHttpJsonEncoder<T> extends MessageToMessageEncoder
     }
 
 }
-HttpJsonRequestEncoder
-JAVA
+```
+`HttpJsonRequestEncoder`
+```JAVA
 public class HttpJsonRequestEncoder extends AbstractHttpJsonEncoder<HttpJsonRequest>{
 
     @Override
@@ -2592,9 +2568,8 @@ public class HttpJsonRequestEncoder extends AbstractHttpJsonEncoder<HttpJsonRequ
 
 **HTTP + JSON 请求消息编码类**
 
-```
-HttpJsonRequest
-JAVA
+`HttpJsonRequest`
+```JAVA
 @Data
 @NoArgsConstructor
 public class HttpJsonRequest {
@@ -2615,9 +2590,8 @@ public class HttpJsonRequest {
 
 **HTTP + JSON 请求消息解码类**
 
-```
-AbstractHttpJsonDecoder
-JAVA
+`AbstractHttpJsonDecoder`
+```JAVA
 public abstract class AbstractHttpJsonDecoder<T> extends MessageToMessageDecoder<T> {
 
     private Class<?> clazz;
@@ -2656,8 +2630,9 @@ public abstract class AbstractHttpJsonDecoder<T> extends MessageToMessageDecoder
         return JSONObject;
     }
 }
-HttpJsonRequestDecoder
-JAVA
+```
+`HttpJsonRequestDecoder`
+```JAVA
 public class HttpJsonRequestDecoder extends AbstractHttpJsonDecoder<FullHttpRequest>{
     protected HttpJsonRequestDecoder(Class<?> clazz) {
         super(clazz);
@@ -2693,9 +2668,8 @@ public class HttpJsonRequestDecoder extends AbstractHttpJsonDecoder<FullHttpRequ
 
 **HTTP + JSON 响应消息编码类**
 
-```
-HttpJsonResponse
-JAVA
+`HttpJsonResponse`
+```JAVA
 @Data
 @NoArgsConstructor
 public class HttpJsonResponse {
@@ -2711,9 +2685,8 @@ public class HttpJsonResponse {
 
 它包含两个成员变量：FullHttpResponse 和 Object，Object 就是业务需要发送的应答 POJO 对象。
 
-```
-HttpXmlResponseEncoder
-JAVA
+`HttpXmlResponseEncoder`
+```JAVA
 public class HttpJsonResponseEncoder extends AbstractHttpJsonEncoder<HttpJsonResponse> {
     @Override
     protected void encode(ChannelHandlerContext ctx, HttpJsonResponse msg, List<Object> out) throws Exception {
@@ -2745,9 +2718,8 @@ public class HttpJsonResponseEncoder extends AbstractHttpJsonEncoder<HttpJsonRes
 
 客户端接收到 HTTP + XML 应答消息后，对消息进行解码，获得 HttpJsonResponse 对象。
 
-```
-HttpJsonResponseDecoder
-JAVA
+`HttpJsonResponseDecoder`
+```JAVA
 public class HttpJsonResponseDecoder extends AbstractHttpJsonDecoder<DefaultFullHttpResponse> {
     protected HttpJsonResponseDecoder(Class<?> clazz) {
         super(clazz);
@@ -2776,9 +2748,8 @@ public class HttpJsonResponseDecoder extends AbstractHttpJsonDecoder<DefaultFull
 3. 接收 HTTP 服务端的应答消息，将 JSON 反序列化解码为订购消息 POJO 对象；
 4. 关闭 HTTP 连接。
 
-```
-HttpJsonClient
-JAVA
+`HttpJsonClient`
+```JAVA
 public class HttpJsonClient {
 
     public static void main(String[] args) throws InterruptedException {
@@ -2826,8 +2797,9 @@ public class HttpJsonClient {
         }
     }
 }
-HttpJsonClientHandler
-JAVA
+```
+`HttpJsonClientHandler`
+```JAVA
 public class HttpJsonClientHandler extends SimpleChannelInboundHandler<HttpJsonResponse> {
     /**
      * 构造HttpJsonRequest请求对象，调用 writeAndFlush 发送
@@ -2871,9 +2843,9 @@ public class HttpJsonClientHandler extends SimpleChannelInboundHandler<HttpJsonR
 4. 通过 HTTP + JSON 的格式返回应答消息；
 5. 主动关闭 HTTP 连接。
 
-```
-HttpJsonServer
-JAVA
+
+`HttpJsonServer`
+```JAVA
 public class HttpJsonServer {
 
     public static void main(String[] args) throws InterruptedException {
@@ -2918,8 +2890,9 @@ public class HttpJsonServer {
 
     }
 }
-HttpJsonServerHandler
-JAVA
+```
+`HttpJsonServerHandler`
+```JAVA
 public class HttpJsonServerHandler extends SimpleChannelInboundHandler<HttpJsonRequest> {
     @Override
     public void exceptionCaught(ChannelHandlerContext ctx, Throwable cause) throws Exception {
@@ -3070,8 +3043,7 @@ WebSocket 的握手关闭消息带有一个状态码和一个可选的关闭原�
 
 **服务端**
 
-```
-JAVA
+```JAVA
 public class WebSocketServer {
     private final static Logger LOGGER = LogManager.getLogger(WebSocketServer.class);
 
@@ -3115,8 +3087,9 @@ public class WebSocketServer {
         }
     }
 }
-WebSocketHandler
-JAVA
+```
+`WebSocketHandler`
+```JAVA
 public class WebSocketHandler extends SimpleChannelInboundHandler<Object> {
 
     private static final Logger LOGGER = LogManager.getLogger(WebSocketServer.class);
@@ -3225,8 +3198,7 @@ public class WebSocketHandler extends SimpleChannelInboundHandler<Object> {
 
 **客户端**
 
-```
-HTML
+```HTML
 <html>
 <head>
     <meta charset="UTF-8">
@@ -3320,9 +3292,8 @@ UDP 协议的特点如下：
 
 ### UDP 服务端开发
 
-```
-ChineseProverbServer
-JAVA
+`ChineseProverbServer`
+```JAVA
 public class ChineseProverbServer {
 
     public static void main(String[] args) throws InterruptedException {
@@ -3348,8 +3319,9 @@ public class ChineseProverbServer {
         }
     }
 }
-ChineseProverbServerHandler
-JAVA
+```
+`ChineseProverbServerHandler`
+```JAVA
 @ChannelHandler.Sharable
 public class ChineseProverbServerHandler extends SimpleChannelInboundHandler<DatagramPacket> {
 
@@ -3396,9 +3368,8 @@ UDP 服务器处理流程图，如图：
 
 客户端需要主动构建请求消息，向本网段的所有主机广播请求消息，对于服务端而言，接收到广播消息之后会向广播消息的发起方进行定点发送响应。
 
-```
-ChineseProverbClient
-JAVA
+`ChineseProverbClient`
+```JAVA
 public class ChineseProverClient {
     public static void main(String[] args) throws InterruptedException {
         int port = 8080;
@@ -3431,8 +3402,9 @@ public class ChineseProverClient {
         }
     }
 }
-ChineseProverbClientHandler
-JAVA
+```
+`ChineseProverbClientHandler`
+```JAVA
 public class ChineseProverbClientHandler extends SimpleChannelInboundHandler<DatagramPacket> {
 
 
@@ -3487,8 +3459,7 @@ Java NIO 中的 File Channel 是一个连接到文件的通道，可以通过这
 
 在使用 FileChannel 之前必须先打开它，FileChannel 无法直接被打开，需要通过使用 InputStream、OutputStream 或 RandomAccessFile 来获取一个 FileChannel 实例。
 
-```
-JAVA
+```JAVA
 RandomAccessFile randomAccessFile = new RandomAccessFile(msg, "r");
 FileChannel channel = randomAccessFile.getChannel();
 ```
@@ -3515,9 +3486,8 @@ FileChannel channel = randomAccessFile.getChannel();
 
 #### 服务端
 
-```
-FileServer
-JAVA
+`FileServer`
+```JAVA
 public class FileServer {
     private static final Logger LOGGER = LogManager.getLogger(FileServer.class);
 
@@ -3561,8 +3531,9 @@ public class FileServer {
         }
     }
 }
-FileServerHandler
-JAVA
+```
+`FileServerHandler`
+```JAVA
 public class FileServerHandler extends SimpleChannelInboundHandler<String> {
     private static final Logger LOGGER = LogManager.getLogger(FileServerHandler.class);
     private static final String CR = System.getProperty("line.separator");

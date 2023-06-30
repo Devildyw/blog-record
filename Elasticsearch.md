@@ -88,8 +88,7 @@ CCR 提供了一种方式自动地从主集群同步索引到作为热备的备�
 
 ### 2.1.1 环境设置：设置max_map_count不然es启动报错
 
-```
-BASH
+```BASH
 # 查看max_map_count的值，应该是65530
 cat /proc/sys/vm/max_map_count
 # 设置max_map_count的值
@@ -100,8 +99,7 @@ sysctl -w vm.max_map_count=262144
 
 拉取 Elasticsearrch、Kibana Docker 镜像
 
-```
-BASH
+```BASH
 docker pull docker.elastic.co/elasticsearch/elasticsearch:8.5.3
 docker pull docker.elastic.co/kibana/kibana:8.5.3
 ```
@@ -119,15 +117,13 @@ docker pull docker.elastic.co/kibana/kibana:8.5.3
 
 1. 为 Elasticsearch 和 Kibana 创建新的 docker 网络
 
-```
-BASH
+```BASH
 docker network create elastic
 ```
 
 1. 重建 elasticsearch 容器并运行
 
-```
-BASH
+```BASH
 docker run --name es01 --net elastic -p 9200:9200 -p 9300:9300 \
 -e "discovery.type=single-node" \
 -e CLI_JAVA_OPTS="-Xms1024m -Xmx1024m" \
@@ -163,8 +159,7 @@ docker run --name es01 --net elastic -p 9200:9200 -p 9300:9300 \
 
 运行 Kibana 容器
 
-```
-SH
+```SH
 docker run --name kib-01 --net elastic -p 5601:5601 -v kb_config:/usr/share/kibana/config -itd docker.elastic.co/kibana/kibana:8.5.3
 ```
 
@@ -189,15 +184,13 @@ docker run --name kib-01 --net elastic -p 5601:5601 -v kb_config:/usr/share/kiba
 
 #### kibana汉化
 
-```
-BASH
+```BASH
 vi /var/lib/docker/volumes/kbconfig/_data/kibana.yml
 ```
 
 最后一行加入，重启kibana容器(注意冒号后面有空格)：
 
-```
-BASH
+```BASH
 i18n.locale: "zh-CN"
 ```
 
@@ -237,8 +230,7 @@ IK 分词器提供了两个分词器算法：
 
 使用 ik_smart 算法对来进行中文分词，明显会发现与默认分词器的区别；
 
-```
-JSON
+```JSON
 #分词
 GET _analyze
 {
@@ -253,8 +245,7 @@ Elasticsearch是基于Lucene的全文检索库，本质也是存储数据，很�
 
 对比关系：
 
-```
-PLAINTEXT
+```PLAINTEXT
 索引（indices）----------------------Databases 数据库
 
   类型（type）--------------------------Table 数据表 （Type在 8.x 版本后删除）
@@ -272,8 +263,7 @@ PLAINTEXT
 
 一些基本查询 es 的语句
 
-```
-TXT
+```TXT
 GET _cluster/health   #检查集群节点健康状态
 GET _cat/health  查看 es 健康状况
 GET _cat/nodes 查看所有节点
@@ -282,8 +272,7 @@ GET _cat/master 查看主节点
 
 查看es中有哪些索引：
 
-```
-HTTP
+```HTTP
 GET /_cat/indices?v
 ```
 
@@ -306,8 +295,7 @@ GET /_cat/indices?v
 
 #### 2.4.1.1 创建索引
 
-```
-TEXT
+```TEXT
 PUT /索引名称（必须小写 不能重复创建相同名称的索引）
 ```
 
@@ -315,8 +303,7 @@ PUT /索引名称（必须小写 不能重复创建相同名称的索引）
 
 参数可选：指定分片及副本。
 
-```
-JSON
+```JSON
 {
     "settings": {
         "number_of_shards": 3, #主分片
@@ -327,23 +314,20 @@ JSON
 
 #### 2.4.1.2 查询索引是否存在
 
-```
-TXT
+```TXT
 HEAD 索引名称 (200存在 404不存在)
 ```
 
 #### 2.4.1.3 查询索引
 
-```
-TXT
+```TXT
 GET /索引名称 #查询单个索引的全部信息
 GET _cat/indices #查询所有索引
 ```
 
 #### 2.4.1.4 为索引起别名
 
-```
-JSON
+```JSON
 # 为索引添加别名 前提是别名并不是一个存在的名称
 POST _aliases
 {
@@ -366,8 +350,7 @@ POST _aliases
 
 #### 2.4.1.6 删除索引
 
-```
-TXT
+```TXT
 DELETE /索引名
 ```
 
@@ -377,8 +360,7 @@ DELETE /索引名
 
 **创建模板**
 
-```
-JSON
+```JSON
 #创建模板
 PUT _template/mytemplate
 {
@@ -403,15 +385,13 @@ PUT _template/mytemplate
 
 **查询模板**
 
-```
-HTTP
+```HTTP
 GET _template/mytemplate
 ```
 
 **删除模板**
 
-```
-HTTP
+```HTTP
 DELETE _template/mytemplate
 ```
 
@@ -427,8 +407,7 @@ DELETE _template/mytemplate
 
 #### 2.4.2.1 创建映射字段
 
-```
-JSON
+```JSON
 PUT /索引
 {
   "mappings": {
@@ -454,8 +433,7 @@ PUT /索引
 
 #### 2.4.2.2 查看映射关系
 
-```
-HTTP
+```HTTP
 GET /索引库名/_mapping
 ```
 
@@ -466,8 +444,7 @@ GET /索引库名/_mapping
 - `_source`：源文档信息，所有的数据都在里面。
 - `_id`：这条文档的唯一标示，与文档自己的id字段没有关联
 
-```
-JSON
+```JSON
 #指定id的方式
 PUT 索引名/_doc/id
 # 数据
@@ -491,8 +468,7 @@ POST 索引名/_doc
 
 **批量增加数据**
 
-```
-JSON
+```JSON
 PUT 索引名/_bulk
 {"index":{"_index":"索引名","_id":"id"}}
 {"id":1001,"name":"zhang1","age":31}# 数据
@@ -512,8 +488,7 @@ PUT 索引名/_bulk
 
 #### 2.4.3.2 查询文档
 
-```
-JSON
+```JSON
 #查询文档
 GET 索引名/_doc/id
 #查询索引下的所有的文档数据
@@ -531,8 +506,7 @@ GET 索引名/_search
 
 #### 2.4.3.3 修改文档
 
-```
-JSON
+```JSON
 #修改数据
 PUT 索引名/_doc/id
 {
@@ -551,8 +525,7 @@ POST 索引名/_doc/id
 
 #### 2.4.3.4 删除数据
 
-```
-JSON
+```JSON
 DELETE 索引/_doc/id
 ```
 
@@ -562,8 +535,7 @@ DELETE 索引/_doc/id
 
 #### 2.4.4.1 匹配查询（match）
 
-```
-JSON
+```JSON
 # 条件查询 match
 GET 索引名/_search
 {
@@ -603,8 +575,7 @@ GET 索引名/_search
 >
 > **要注意 es 是会对存储数据的 text 类型的字段进行分词存储的。**
 
-```
-JSON
+```JSON
 # 对查询结果的字段进行限制
 GET 索引/_search
 {
@@ -619,8 +590,7 @@ GET 索引/_search
 
 **子属性匹配**
 
-```
-JSON
+```JSON
 GET 索引名/_search
 {
   "query": {
@@ -637,8 +607,7 @@ GET 索引名/_search
 
 `bool`把各种其它查询通过`must`（与）、`must_not`（非）、`should`（或）的方式进行组合
 
-```
-JSON
+```JSON
 #组合多个条件 or
 GET test_index/_search
 {
@@ -668,8 +637,7 @@ GET test_index/_search
 
 `term` 查询被用于精确值匹配，这些精确值可能是数字、时间、布尔或者那些**未分词**的字符串。
 
-```
-JSON
+```JSON
 GET 索引/_search
 {
     "query":{
@@ -682,8 +650,7 @@ GET 索引/_search
 
 #### 2.4.4.4 排序后查询(sort)
 
-```
-JSON
+```JSON
 #排序后查询
 GET 索引名/_search
 {
@@ -704,8 +671,7 @@ GET 索引名/_search
 
 #### 2.4.4.5 分页查询(page-from/size)
 
-```
-JSON
+```JSON
 #分页查询
 GET test_index/_search
 {
@@ -721,8 +687,7 @@ GET test_index/_search
 
 `range` 查询找出那些落在指定区间内的数字或者时间
 
-```
-JSON
+```JSON
 GET 索引词/_search
 {
   "query": {
@@ -749,8 +714,7 @@ range`查询允许以下字符：
 
 所有的查询都会影响到文档的评分及排名。如果我们需要在查询结果中进行过滤，并且不希望过滤条件影响评分，那么就不要把过滤条件作为查询条件来用。而是使用`filter`方式：
 
-```
-JSON
+```JSON
 GET 索引名/_search
 {
   "query": {

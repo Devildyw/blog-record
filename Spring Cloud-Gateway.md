@@ -193,8 +193,7 @@ Predicate 就是路由的匹配条件，而 Filter 就是对请求和响应进�
 
    `pom.xml`依赖
 
-   ```
-   XML
+   ```XML
    <?xml version="1.0" encoding="UTF-8"?>
    <project xmlns="http://maven.apache.org/POM/4.0.0"
             xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
@@ -311,8 +310,7 @@ Predicate 就是路由的匹配条件，而 Filter 就是对请求和响应进�
 
    引入SpringCloudGateway的依赖和nacos的服务发现依赖：
 
-   ```
-   XML
+   ```XML
    <!--网关依赖-->
    <dependency>
        <groupId>org.springframework.cloud</groupId>
@@ -327,8 +325,7 @@ Predicate 就是路由的匹配条件，而 Filter 就是对请求和响应进�
 
    `pom.xml`依赖
 
-   ```
-   XML
+   ```XML
    <?xml version="1.0" encoding="UTF-8"?>
    <project xmlns="http://maven.apache.org/POM/4.0.0"
             xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
@@ -387,8 +384,7 @@ Predicate 就是路由的匹配条件，而 Filter 就是对请求和响应进�
 
 3. `application.yml`
 
-   ```
-   YML
+   ```YML
    server:
      port: 9527 #网关端口
    spring:
@@ -403,8 +399,7 @@ Predicate 就是路由的匹配条件，而 Filter 就是对请求和响应进�
 
 4. 主启动类`GatewayMain9527`
 
-   ```
-   JAVA
+   ```JAVA
    @SpringBootApplication
    @EnableEurekaClient
    public class GatewayMain9527 {
@@ -422,8 +417,7 @@ Predicate 就是路由的匹配条件，而 Filter 就是对请求和响应进�
 
    配置如下，`application.yml`中添加如下配置。
 
-   ```
-   YML
+   ```YML
    cloud:
      gateway:
        routes:
@@ -440,8 +434,7 @@ Predicate 就是路由的匹配条件，而 Filter 就是对请求和响应进�
 
    完整配置
 
-   ```
-   YML
+   ```YML
    server:
      port: 9527 #网关端口
    spring:
@@ -476,15 +469,13 @@ Predicate 就是路由的匹配条件，而 Filter 就是对请求和响应进�
 
    `http://localhost:9527/payment/lb`
 
-   ```
-   JSON
+   ```JSON
    8001
    ```
 
    `http://localhost:9527/payment/get/1547504748557492225`
 
-   ```
-   JSON
+   ```JSON
    {
        "code": 200,
        "msg": "查询成功,serverPort:8001",
@@ -503,8 +494,7 @@ Predicate 就是路由的匹配条件，而 Filter 就是对请求和响应进�
 
 通过配置类中配置`RouteLocator`来配置路由
 
-```
-JAVA
+```JAVA
 @Configuration
 public class GateWatConfig {
 
@@ -523,8 +513,7 @@ public class GateWatConfig {
 
 编程式配置路由的核心代码
 
-```
-JAVA
+```JAVA
 routes.route("path_routh_dyw", //id
               r -> r.path("/guonei") //路径
                       .uri("http://news.baidu.com/guonei")) //转发路径
@@ -549,8 +538,7 @@ public Builder route(String id, Function<PredicateSpec, Buildable<Route>> fn) {
 
 修改`Cloud-gateway-gateway9527` `application.yml`文件
 
-```
-YML
+```YML
 gateway:
   discovery:
     locator:
@@ -559,15 +547,13 @@ gateway:
 
 修改原路由uri为lb://serviceName的格式
 
-```
-YML
+```YML
 uri: lb://CLOUD-PAYMENT-SERVICE
 ```
 
 完整配置
 
-```
-YML
+```YML
 server:
   port: 9527
 spring:
@@ -603,8 +589,7 @@ eureka:
 
 测试 `http://localhost:9527/payment/lb`
 
-```
-JSON
+```JSON
 8001
 8002
 8001
@@ -696,8 +681,7 @@ Spring提供了31种不同的路由过滤器工厂。例如：
 
 配置过滤器
 
-```
-YML
+```YML
 spring:
   application:
     name: cloud-gateway #服务名称
@@ -723,8 +707,7 @@ spring:
 
 如果要对所有的路由都生效，则可以将过滤器工厂写到default下。格式如下：
 
-```
-YML
+```YML
 server:
   port: 9527 #网关端口
 spring:
@@ -771,8 +754,7 @@ spring:
 
 2. 新建类`MyLogGatewayFilter`实现GlobalFilter，Ordered接口
 
-   ```
-   JAVA
+   ```JAVA
    /**
     * @author Devil
     * @since 2022-07-29-17:47
@@ -811,8 +793,7 @@ spring:
 
    测试接口`http://localhost:9527/payment/lb?uname=张三`
 
-   ```
-   JSON
+   ```JSON
    8001
    8002
    8001
@@ -842,8 +823,7 @@ spring:
 
 可以参考下面几个类的源码来查看：
 
-```
-JAVA
+```JAVA
 org.springframework.cloud.gateway.route.RouteDefinitionRouteLocator#getFilters()方法是先加载defaultFilters，然后再加载某个route的filters，然后合并。
 JAVA
 org.springframework.cloud.gateway.handler.FilteringWebHandler#handle()方法会加载全局过滤器，与前面的过滤器合并后根据order排序，组织过滤器链
@@ -868,8 +848,7 @@ CORS跨域要配置的参数包括哪几个？
 - 是否允许使用cookie？
 - 有效期是多久？
 
-```
-YML
+```YML
 spring:
   application:
     name: cloud-gateway #服务名称

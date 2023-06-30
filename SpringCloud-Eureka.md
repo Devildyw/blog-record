@@ -62,27 +62,15 @@
 
 `Eureka Server`配置参数的格式：`eureka.server.xxx`。
 
-- ```
-  enable-self-preservation
-  ```
-
-  ：
+- `enable-self-preservation`：
 
   - 表示注册中心是否开启服务的自我保护能力（后面会介绍）。
 
-- ```
-  renewal-percent-threshold
-  ```
-
-  ：
+- `renewal-percent-threshold`：
 
   - 表示 Eureka Server 开启自我保护的系数，默认：0.85。
 
-- ```
-  eviction-interval-timer-in-ms
-  ```
-
-  ：
+- `eviction-interval-timer-in-ms`：
 
   - 表示 `Eureka Server` 清理无效节点的频率，默认 60000 毫秒（60 秒）。
 
@@ -90,39 +78,23 @@
 
 `Eureka Instance` 的配置参数格式：`eureka.instance.xxx`。
 
-- ```
-  instance-id
-  ```
-
-  ：
+- `instance-id`：
 
   - 表示实例在注册中心注册的唯一ID。
 
-- ```
-  prefer-ip-address
-  ```
-
-  ：
+- `prefer-ip-address`：
 
   - `true`：实例以 `IP` 的形式注册
   - `false`：实例以机器 `HOSTNAME` 形式注册
 
-- ```
-  lease-expiration-duration-in-seconds
-  ```
-
-  ：
+- `lease-expiration-duration-in-seconds`：
 
   - 表示 `Eureka Server` 在接收到上一个心跳之后等待下一个心跳的秒数（默认 90 秒），若不能在指定时间内收到心跳，则移除此实例，并禁止此实例的流量。
   - 此值设置太长，即使实例不存在，流量也能路由到该实例
   - 此值设置太小，由于网络故障，实例会被取消流量
   - **需要设置为至少高于 `lease-renewal-interval-in-seconds` 的值，不然会被误移除了。**
 
-- ```
-  lease-renewal-interval-in-seconds
-  ```
-
-  ：
+- `lease-renewal-interval-in-seconds`：
 
   - 表示 `Eureka Client` 向 `Eureka Server` 发送心跳的频率（默认 30 秒），如果在 `lease-expiration-duration-in-seconds` 指定的时间内未收到心跳，则移除该实例。
 
@@ -130,45 +102,25 @@
 
 Eureka Client 的配置参数格式：`eureka.client.xxx`。
 
-- ```
-  register-with-eureka
-  ```
-
-  ：
+- `register-with-eureka`：
 
   - 表示此实例是否注册到 Eureka Server 以供其他实例发现。在某些情况下，如果你不想自己的实例被发现，而只想发现其他实例，配置为 false 即可。
 
-- ```
-  fetch-registry
-  ```
-
-  ：
+- `fetch-registry`：
 
   - 表示客户端是否从 Eureka Server 获取实例注册信息。
 
-- ```
-  serviceUrl.defaultZone
-  ```
-
-  ：
+- `serviceUrl.defaultZone`：
 
   - 表示客户端需要注册的 Eureka Server 的地址。
 
 #### 用到的其他参数
 
-- ```
-  spring.application.name
-  ```
-
-  ：
+- `spring.application.name`：
 
   - 表示应用名称，在注册中心中显示的服务注册名称。
 
-- ```
-  spring.cloud.client.ip-address
-  ```
-
-  ：
+- `spring.cloud.client.ip-address`：
 
   - 获取客户端的 `IP` 地址。
 
@@ -194,8 +146,7 @@ Eureka 控制台上面的其他参数都可以定制。
 
 1. `pom.xml`
 
-   ```
-   XML
+   ```XML
    <?xml version="1.0" encoding="UTF-8"?>
    <project xmlns="http://maven.apache.org/POM/4.0.0"
             xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
@@ -253,8 +204,7 @@ Eureka 控制台上面的其他参数都可以定制。
 
 2. `application.yml`
 
-   ```
-   YML
+   ```YML
    server:
      port: 7001
    
@@ -273,8 +223,7 @@ Eureka 控制台上面的其他参数都可以定制。
 
 3. 创建启动类
 
-   ```
-   JAVA
+   ```JAVA
    @SpringBootApplication
    @EnableEurekaServer //表示该模块为Eureka的注册中心
    public class EurekaMain7001 {
@@ -300,8 +249,7 @@ Eureka 控制台上面的其他参数都可以定制。
 
    1. 改`pom.xml`新增依赖`spring-cloud-starter-netflix-eureka-client`
 
-      ```
-      XML
+      ```XML
       <dependency>
           <groupId>org.springframework.cloud</groupId>
           <artifactId>spring-cloud-starter-netflix-eureka-client</artifactId>
@@ -310,8 +258,7 @@ Eureka 控制台上面的其他参数都可以定制。
 
    2. 改`application.yml` 新增Eureka配置
 
-      ```
-      YML
+      ```YML
       eureka:
         client:
           #表示是否将自己注册进EurekaServer 默认为true
@@ -327,8 +274,7 @@ Eureka 控制台上面的其他参数都可以定制。
 
    3. 启动类修改
 
-      ```
-      JAVA
+      ```JAVA
       @SpringBootApplication
       @EnableEurekaClient //添加该注解提供与客户端的交互 这里是将服务注册到注册中心
       public class PaymentMain8002 {
@@ -351,8 +297,7 @@ Eureka 控制台上面的其他参数都可以定制。
 
 1. 修改`pom.xml` 添加`spring-cloud-starter-netflix-eureka-client`依赖
 
-   ```
-   XML
+   ```XML
    <dependency>
        <groupId>org.springframework.cloud</groupId>
        <artifactId>spring-cloud-starter-netflix-eureka-client</artifactId>
@@ -361,8 +306,7 @@ Eureka 控制台上面的其他参数都可以定制。
 
 2. 修改`application.yml` 添加Eureka相关配置
 
-   ```
-   YML
+   ```YML
    eureka:
      client:
        #表示是否将自己注册进EurekaServer 默认为true
@@ -377,8 +321,7 @@ Eureka 控制台上面的其他参数都可以定制。
 
 3. 启动类
 
-   ```
-   JAVA
+   ```JAVA
    @EnableEurekaClient //添加该注解提供与客户端的交互 这里是消费注册中心中的服务
    @SpringBootApplication
    public class OrderMain80 {
@@ -394,8 +337,7 @@ Eureka 控制台上面的其他参数都可以定制。
 
    `OrderController`
 
-   ```
-   JAVA
+   ```JAVA
    //    private static final String PAYMENT_URL = "http://localhost:8001";
        private static final String PAYMENT_URL = "http://CLOUD-PAYMENT-SERVICE";
    ```
@@ -406,8 +348,7 @@ Eureka 控制台上面的其他参数都可以定制。
 
    `GET : http://localhost:80/consumer/payment/get/1547118279208656900`
 
-   ```
-   JSON
+   ```JSON
    {
        "code": 200,
        "msg": "查询成功",
@@ -441,10 +382,9 @@ Eureka 控制台上面的其他参数都可以定制。
 
 搭建步骤这里不再演示只说这里需要更改的地方
 
-```
-Cloud-eureka-server7001
-application.yml
-YML
+`Cloud-eureka-server7001`
+`application.yml`
+```YML
 server:
   port: 7001
 
@@ -463,10 +403,10 @@ eureka:
 
 ------
 
-```
-Cloud-eureka-server7002
-application.yml
-YML
+`Cloud-eureka-server7002`
+`application.yml`
+
+```YML
 server:
   port: 7002
 
@@ -527,8 +467,7 @@ http://eureka7001.com:7001/
 
 修改部分`application.yml`
 
-```
-YML
+```YML
 server:
  port: 8002
  ... #其他部分相同这里省略
@@ -563,9 +502,9 @@ eureka:
 
 **注意： 当服务以集群出现时如果采用了用服务名称代替`ip`+端口的格式的话 需要在`RestTemplate`配置类下配置`@LoadBalanced` 实现负载均衡 否则会出现访问报错**
 
-```
-RestTemplateConfig
-JAVA
+`RestTemplateConfig`
+
+```JAVA
 @Configuration
 public class RestTemplateConfig {
     @Bean
@@ -578,22 +517,22 @@ public class RestTemplateConfig {
 
 并且为了方便查看负载均衡，我们在Controller的返回结果中加上了他们各自的端口
 
-```
-JAVA
+```JAVA
 private final Integer serverPort = 8002; //Cloud-eureka-provider-payment8002
 private final Integer serverPort = 8001; //Cloud-eureka-provider-payment8001
 ```
 
 访问接口 `POST : http://localhost:80/consumer/payment/create`
 
-```
-JSON
+```JSON
 {
     "code": 200,
     "msg": "插入数据库成功,serverPort:8002",
     "data": 1
 }
-JSON
+```
+
+```JSON
 {
     "code": 200,
     "msg": "插入数据库成功,serverPort:8001",
@@ -613,8 +552,7 @@ DiscoveryClient`提供了获取注册中心中注册服务信息的`API
 
 修改`Cloud-eureka-provider-payment8002`的`Controller` 新增
 
-```
-JAVA
+```JAVA
    @Resource
    private DiscoveryClient discoveryClient;
 
@@ -637,8 +575,7 @@ JAVA
 
 启动类新增注解`@EnableDiscoveryClient`
 
-```
-JAVA
+```JAVA
 @SpringBootApplication
 @EnableEurekaClient
 @EnableDiscoveryClient //添加该注解 使其该微服务支持Discovery
@@ -652,9 +589,8 @@ public class PaymentMain8002 {
 
 启动测试
 
-```
-GET : http://localhost:8002/payment/discovery
-JSON
+`GET : http://localhost:8002/payment/discovery`
+```JSON
 {
     "services": [
         "cloud-payment-service",
@@ -714,8 +650,7 @@ Eureka自我保护机制，通过配置 `eureka.server.enable-self-preservation`
 
 ##### 1、 注册中心关闭自我保护机制，修改检查失效服务的时间。
 
-```
-YML
+```YML
 eureka:
   server:
      enable-self-preservation: false
@@ -724,8 +659,7 @@ eureka:
 
 ##### 2、 微服务修改减短服务心跳的时间。
 
-```
-BASH
+```BASH
 # 默认90秒
 lease-expiration-duration-in-seconds:  10
 
@@ -737,10 +671,9 @@ lease-renewal-interval-in-seconds:  3
 
 根据如上我们可以根据需求关闭注册中心的自我保护机制。
 
-```
-Cloud-eureka-server7001
-application.yml
-YML
+`Cloud-eureka-server7001`
+`application.yml`
+```YML
 server:
   port: 7001
 
@@ -760,9 +693,11 @@ eureka:
     enable-self-preservation: false
     #设置心跳检测时间
     eviction-interval-timer-in-ms: 3000
-Cloud-eureka-provider-payment8002
-application.yml
-YML
+```
+
+`Cloud-eureka-provider-payment8002`
+`application.yml`
+```YML
 server:
   port: 8002
 	.... # 省略配置

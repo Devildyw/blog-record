@@ -24,16 +24,14 @@
 
 当安装Git后首先要做的事情是**设置用户名称**和**email**地址。这是非常重要的，因为每次Git提交都会使用该用户信息
 
-```
-SH
+```SH
 git config --global user.name "itcast"
 git config --global user.email "hello@qq.com"
 ```
 
 查看配置信息
 
-```
-SH
+```SH
 git confifig --global user.name
 git confifig --global user.email
 ```
@@ -78,8 +76,7 @@ Git工作目录下对于文件的**修改**(增加、删除、更新)会存在�
 
 **对log的格式进行自定义 并且对该操作使用alias起了一个别名**
 
-```
-SH
+```SH
 git config --global alias.lg "log --color --graph --pretty=format:'%Cred%h%Creset -%C(yellow)%d%Creset %s %Cgreen(%cr) %C(bold blue)<%an>%Creset' --abbrev-commit"
 ```
 
@@ -108,8 +105,7 @@ git config --global alias.lg "log --color --graph --pretty=format:'%Cred%h%Crese
 
 一般我们总会有些文件无需纳入Git 的管理，也不希望它们总出现在未跟踪文件列表。 通常都是些自动生成的文件，比如日志文件，或者编译过程中创建的临时文件等。 在这种情况下，我们可以在工作目录中创建一个名为 **.gitignore 的文件（文件名称固定）**，列出要忽略的文件模式。
 
-```
-TEX
+```TEX
 HELP.md
 target/
 !.mvn/wrapper/maven-wrapper.jar
@@ -214,8 +210,7 @@ build/
 
     - **命令: git remote add <远端名称(别名)> <仓库路径(url)>**
 
-      ```
-      SH
+      ```SH
       git remote add origin git@gitee.com:Devildyw/spring-mvc.git
       ```
 

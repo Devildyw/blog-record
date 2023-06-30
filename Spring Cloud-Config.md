@@ -64,24 +64,21 @@ Spring Cloud `Config`分为**客户端和服务端两个部分**。
 
    - `application-dev.yml`
 
-     ```
-     YML
+     ```YML
      config:
        info: "master branch,springcloud-config/config-dev.yml version=1"
      ```
 
    - `application-prod.yml`
 
-     ```
-     YML
+     ```YML
      config:
        info: "master branch,springcloud-config/config-prod.yml version=1"
      ```
 
    - `application-test.yml`
 
-     ```
-     YML
+     ```YML
      config:
        info: "master branch,springcloud-config/config-test.yml version=1"
      ```
@@ -92,8 +89,7 @@ Spring Cloud `Config`分为**客户端和服务端两个部分**。
 
 6. `pom.xml`依赖
 
-   ```
-   XML
+   ```XML
    <?xml version="1.0" encoding="UTF-8"?>
    <project xmlns="http://maven.apache.org/POM/4.0.0"
             xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
@@ -210,8 +206,7 @@ Spring Cloud `Config`分为**客户端和服务端两个部分**。
 
 8. `pom.xml`依赖
 
-   ```
-   XML
+   ```XML
    <?xml version="1.0" encoding="UTF-8"?>
    <project xmlns="http://maven.apache.org/POM/4.0.0"
             xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
@@ -280,8 +275,7 @@ Spring Cloud `Config`分为**客户端和服务端两个部分**。
 
 9. `application.yml`配置
 
-   ```
-   YML
+   ```YML
    server:
      port: 3344
    spring:
@@ -311,8 +305,7 @@ Spring Cloud `Config`分为**客户端和服务端两个部分**。
 
     `ConfigCenterMain3344`
 
-    ```
-    JAVA
+    ```JAVA
     @SpringBootApplication
     @EnableEurekaClient
     @EnableConfigServer //关键
@@ -327,8 +320,7 @@ Spring Cloud `Config`分为**客户端和服务端两个部分**。
 
     访问`http://localhost:3344/master/application-dev.yml`
 
-    ```
-    YML
+    ```YML
     config:
       info: master branch,springcloud-config/config-dev.yml version=1
     ```
@@ -339,8 +331,7 @@ Spring Cloud `Config`分为**客户端和服务端两个部分**。
 
 Spring Cloud官网
 
-```
-PLAINTEXT
+```PLAINTEXT
 /{application}/{profile}[/{label}]
 /{application}-{profile}.yml
 /{label}/{application}-{profile}.yml
@@ -352,8 +343,7 @@ PLAINTEXT
 
 **该方式最为推荐**
 
-```
-HTTP
+```HTTP
 示例
 http://localhost:3344/master/application-dev.yml
 http://localhost:3344/master/application-test.yml
@@ -362,8 +352,7 @@ http://localhost:3344/master/application-prod.yml
 
 **`/{application}-{profile}.yml`**
 
-```
-HTTP
+```HTTP
 示例
 http://localhost:3344/application-test.yml
 http://localhost:3344/application-dev.yml
@@ -372,8 +361,7 @@ http://localhost:3344/application-prod.yml
 
 **`/{application}-{profile}[/{label}]`**
 
-```
-HTTP
+```HTTP
 示例
 http://localhost:3344/application/dev/master
 http://localhost:3344/application/test/master
@@ -382,8 +370,7 @@ http://localhost:3344/application/prod/master
 
 该方式获取到的配置的返回结果也不相同。
 
-```
-JSON
+```JSON
 {
     "name": "application",
     "profiles": [
@@ -453,8 +440,7 @@ JSON
 
 2. `pom.xml`依赖
 
-   ```
-   XML
+   ```XML
    <?xml version="1.0" encoding="UTF-8"?>
    <project xmlns="http://maven.apache.org/POM/4.0.0"
             xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
@@ -532,8 +518,7 @@ JSON
 
    因为`bootstrap.yml`是比`application.yml`先加载的。`bootstrap.yml`优先级高于`application.yml`
 
-   ```
-   YML
+   ```YML
    server:
      port: 3355
    spring:
@@ -556,8 +541,7 @@ JSON
 
 4. 主启动类`ConfigClientMain3355`
 
-   ```
-   JAVA
+   ```JAVA
    @EnableEurekaClient
    @SpringBootApplication
    public class ConfigClientMain3355 {
@@ -569,8 +553,7 @@ JSON
 
 5. 业务类 `ConfigClientController`
 
-   ```
-   JAVA
+   ```JAVA
    package top.devildyw.springcloud.controller;
    
    import org.springframework.beans.factory.annotation.Value;
@@ -597,8 +580,7 @@ JSON
 
    测试接口 `http://localhost:3355/configInfo` 通过该接口获取配置信息`config.info`并将其返回。
 
-   ```
-   JSON
+   ```JSON
    master branch,springcloud-config/config-dev.yml version=1
    ```
 
@@ -622,8 +604,7 @@ JSON
 
 1. 检查`pom.xml`是否加入`actuator`依赖
 
-   ```
-   XML
+   ```XML
    <dependency>
        <groupId>org.springframework.boot</groupId>
        <artifactId>spring-boot-starter-actuator</artifactId>
@@ -632,8 +613,7 @@ JSON
 
 2. 修改`bootstrap.yml`暴露监控端口
 
-   ```
-   YML
+   ```YML
    # 暴露监控端点
    management:
      endpoints:
@@ -644,8 +624,7 @@ JSON
 
    完整的配置文件
 
-   ```
-   YML
+   ```YML
    server:
      port: 3355
    spring:
@@ -683,8 +662,7 @@ JSON
 
    在不刷新3355的情况下调用`http://localhost:3355/configInfo`
 
-   ```
-   JSON
+   ```JSON
    master branch,springcloud-config/config-dev.yml version=3
    ```
 
@@ -692,8 +670,7 @@ JSON
 
 6. 调用`http://localhost:3355/actuator/refresh`刷新3355
 
-   ```
-   JSON
+   ```JSON
    [
    
      "config.client.version",
@@ -705,8 +682,7 @@ JSON
 
 7. 再次访问`http://localhost:3355/configInfo`
 
-   ```
-   JSON
+   ```JSON
    master branch,springcloud-config/config-dev.yml version=4
    ```
 

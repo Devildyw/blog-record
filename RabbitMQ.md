@@ -189,8 +189,7 @@ docker run -d -p 15672:15672  -p  5672:5672  -e RABBITMQ_DEFAULT_USER=admin -e R
 
    1. `rabbitMQ-01-HellWord` `pom.xml`
 
-      ```
-      XML
+      ```XML
       <?xml version="1.0" encoding="UTF-8"?>
       <project xmlns="http://maven.apache.org/POM/4.0.0"
                xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
@@ -238,8 +237,7 @@ docker run -d -p 15672:15672  -p  5672:5672  -e RABBITMQ_DEFAULT_USER=admin -e R
 
       `rabbitMQ-01-comsumer` `pom.xml`
 
-      ```
-      XML
+      ```XML
       <?xml version="1.0" encoding="UTF-8"?>
       <project xmlns="http://maven.apache.org/POM/4.0.0"
                xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
@@ -280,8 +278,7 @@ docker run -d -p 15672:15672  -p  5672:5672  -e RABBITMQ_DEFAULT_USER=admin -e R
 
       `rabbitMQ-01-producer` `pom.xml`
 
-      ```
-      XML
+      ```XML
       <?xml version="1.0" encoding="UTF-8"?>
       <project xmlns="http://maven.apache.org/POM/4.0.0"
                xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
@@ -326,8 +323,7 @@ docker run -d -p 15672:15672  -p  5672:5672  -e RABBITMQ_DEFAULT_USER=admin -e R
 
    `Producer_HelloWorld`
 
-   ```
-   JAVA
+   ```JAVA
    package top.dvildyw.producer;
    
    import com.rabbitmq.client.Channel;
@@ -435,8 +431,7 @@ docker run -d -p 15672:15672  -p  5672:5672  -e RABBITMQ_DEFAULT_USER=admin -e R
 
 4. 编写消费者接收消息
 
-   ```
-   JAVA
+   ```JAVA
    package top.devildyw.consumer;
    
    import com.rabbitmq.client.*;
@@ -534,8 +529,7 @@ docker run -d -p 15672:15672  -p  5672:5672  -e RABBITMQ_DEFAULT_USER=admin -e R
 
    回调对象则是使用的`DefaultConsumer`
 
-   ```
-   JAVA
+   ```JAVA
    DefaultConsumer consumer = new DefaultConsumer(channel){
               /*
               回调方法,当收到消息后,会自动执行该方法
@@ -558,10 +552,10 @@ docker run -d -p 15672:15672  -p  5672:5672  -e RABBITMQ_DEFAULT_USER=admin -e R
    实现其中的回调方法`public void handleDelivery(String consumerTag, Envelope envelope, AMQP.BasicProperties properties, byte[] body) throws IOException;`
 
    > 回调方法,当收到消息后,会自动执行该方法
-   > \1. `consumerTag`: 标识
-   > \2. `envelope`: 获取一些信息,交换机,路由key
-   > \3. `properties`: 配置信息
-   > \4. `body`: 数据
+   > 1. `consumerTag`: 标识
+   > 2. `envelope`: 获取一些信息,交换机,路由key
+   > 3. `properties`: 配置信息
+   > 4. `body`: 数据
 
 ------
 
@@ -596,8 +590,7 @@ docker run -d -p 15672:15672  -p  5672:5672  -e RABBITMQ_DEFAULT_USER=admin -e R
 
 为了方便测试我们对生产者做了些许修改，使其可以一次发送大量的消息
 
-```
-JAVA
+```JAVA
 for (int i = 0; i < 10; i++) {
     String body = i+" hello rabbitmq~~~"; //数字编号 1~10
     //发送
@@ -611,8 +604,7 @@ for (int i = 0; i < 10; i++) {
 
 方便展示注释掉了回调方法中其他无关参数的打印。
 
-```
-JAVA
+```JAVA
 	DefaultConsumer consumer = new DefaultConsumer(channel){
             /*
             回调方法,当收到消息后,会自动执行该方法
@@ -636,15 +628,11 @@ JAVA
 
 启动测试(先启动两个消费者监听队列)
 
-```
-consumer1
-```
+`consumer1`
 
 [![image-20220801141945564](https://ding-blog.oss-cn-chengdu.aliyuncs.com/images/202208011419621.png)](https://ding-blog.oss-cn-chengdu.aliyuncs.com/images/202208011419621.png)
 
-```
-consumer2
-```
+`consumer2`
 
 [![image-20220801142010458](https://ding-blog.oss-cn-chengdu.aliyuncs.com/images/202208011420513.png)](https://ding-blog.oss-cn-chengdu.aliyuncs.com/images/202208011420513.png)
 
@@ -679,8 +667,7 @@ consumer2
 
 **生产者`Producer_PubSub`**
 
-```
-JAVA
+```JAVA
 package top.devildyw.producer;
 
 import com.rabbitmq.client.BuiltinExchangeType;
@@ -780,11 +767,7 @@ Exchange.DeclareOk exchangeDeclare(String exchange, BuiltinExchangeType type, bo
 
 > 1. `exchange`: 交换机名称
 >
-> 2. ```
->    type
->    ```
->
->    : 交换机类型 枚举类型
+> 2. `type`: 交换机类型 枚举类型
 >
 >    1. `DIRECT`(“direct”): 定向
 >    2. `FANOUT`(“fanout”): 扇形(广播),发送消息到每一个与之绑定的队列
@@ -815,24 +798,20 @@ Queue.BindOk queueBind(String queue, String exchange, String routingKey) throws 
 
 消费者没有太大的变换 只是分别绑定上述生产者创建的两个队列的队列名即可。
 
-```
-JAVA
+```JAVA
 channel.basicConsume(queue1Name,true,consumer);
-JAVA
+```
+```JAVA
 channel.basicConsume(queue2Name,true,consumer);
 ```
 
 **启动测试**
 
-```
-Consumer_PubSub1
-```
+`Consumer_PubSub1`
 
 [![image-20220801152237353](https://ding-blog.oss-cn-chengdu.aliyuncs.com/images/202208011522423.png)](https://ding-blog.oss-cn-chengdu.aliyuncs.com/images/202208011522423.png)
 
-```
-Consumer_PubSub2
-```
+`Consumer_PubSub2`
 
 [![image-20220801152301842](https://ding-blog.oss-cn-chengdu.aliyuncs.com/images/202208011523900.png)](https://ding-blog.oss-cn-chengdu.aliyuncs.com/images/202208011523900.png)
 
@@ -875,8 +854,7 @@ Consumer_PubSub2
 
 **生产者`Producer_Routing`**
 
-```
-JAVA
+```JAVA
 package top.devildyw.producer;
 
 import com.rabbitmq.client.BuiltinExchangeType;
@@ -970,29 +948,21 @@ public class Producer_Routing {
 
 **生产者发送 routing key 为 `info`的消息**
 
-```
-Consumer_Routing1
-```
+`Consumer_Routing1`
 
 [![image-20220801161056145](https://ding-blog.oss-cn-chengdu.aliyuncs.com/images/202208011610208.png)](https://ding-blog.oss-cn-chengdu.aliyuncs.com/images/202208011610208.png)
 
-```
-Consumer_Routing2
-```
+`Consumer_Routing2`
 
 [![image-20220801161048325](https://ding-blog.oss-cn-chengdu.aliyuncs.com/images/202208011610389.png)](https://ding-blog.oss-cn-chengdu.aliyuncs.com/images/202208011610389.png)
 
 **生产者发送 routing key 为`error`的消息**
 
-```
-Consumer_Routing1
-```
+`Consumer_Routing1`
 
 [![image-20220801161615050](https://ding-blog.oss-cn-chengdu.aliyuncs.com/images/202208011616105.png)](https://ding-blog.oss-cn-chengdu.aliyuncs.com/images/202208011616105.png)
 
-```
-Consumer_Routing1
-```
+`Consumer_Routing1`
 
 [![image-20220801161628521](https://ding-blog.oss-cn-chengdu.aliyuncs.com/images/202208011616571.png)](https://ding-blog.oss-cn-chengdu.aliyuncs.com/images/202208011616571.png)
 
@@ -1021,8 +991,7 @@ Consumer_Routing1
 
 生产者`Producer_Topic`
 
-```
-JAVA
+```JAVA
 package top.devildyw.producer;
 
 import com.rabbitmq.client.BuiltinExchangeType;
@@ -1113,8 +1082,7 @@ public class Producer_Topic {
 
 交换机与队列的绑定（通配符的配置）
 
-```
-JAVA
+```JAVA
 channel.queueBind(queue1Name,exchangeName,"#.error");
       channel.queueBind(queue1Name,exchangeName,"order.*");
       //队列2的绑定
@@ -1129,29 +1097,21 @@ channel.queueBind(queue1Name,exchangeName,"#.error");
 
 生产者发送 `routingKey` 为 `order.info` 的消息
 
-```
-Consumer_Topic1
-```
+`Consumer_Topic1`
 
 [![image-20220801165834676](https://ding-blog.oss-cn-chengdu.aliyuncs.com/images/202208011658734.png)](https://ding-blog.oss-cn-chengdu.aliyuncs.com/images/202208011658734.png)
 
-```
-Consumer_Topic2
-```
+`Consumer_Topic2`
 
 [![image-20220801165818326](https://ding-blog.oss-cn-chengdu.aliyuncs.com/images/202208011658384.png)](https://ding-blog.oss-cn-chengdu.aliyuncs.com/images/202208011658384.png)
 
 生产者发送 `routingKey` 为 `goods.info` 的消息
 
-```
-Consumer_Topic1
-```
+`Consumer_Topic1`
 
 [![image-20220801170213533](https://ding-blog.oss-cn-chengdu.aliyuncs.com/images/202208011702595.png)](https://ding-blog.oss-cn-chengdu.aliyuncs.com/images/202208011702595.png)
 
-```
-Consumer_Topic2
-```
+`Consumer_Topic2`
 
 [![image-20220801170152429](https://ding-blog.oss-cn-chengdu.aliyuncs.com/images/202208011701487.png)](https://ding-blog.oss-cn-chengdu.aliyuncs.com/images/202208011701487.png)
 
@@ -1178,8 +1138,7 @@ Topic 主题模式可以实现 Pub/Sub 发布于订阅模式和 Routing 路由�
 
 ## Spring Boot 整合 `RabbitMQ`
 
-```
-JAVA
+```JAVA
 <dependency>
   <groupId>org.springframework.boot</groupId>
   <artifactId>spring-boot-starter-amqp</artifactId>
@@ -1193,8 +1152,7 @@ JAVA
 
 2. 导入`pom.xml`依赖
 
-   ```
-   XML
+   ```XML
    <?xml version="1.0" encoding="UTF-8"?>
    <project xmlns="http://maven.apache.org/POM/4.0.0"
             xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
@@ -1230,8 +1188,7 @@ JAVA
 
 3. `application.yml`
 
-   ```
-   YML
+   ```YML
    spring:
      rabbitmq:
        host: 36.137.128.27
@@ -1247,8 +1204,7 @@ JAVA
 
    主要来配置交换机，队列，交换机以及队列之间的绑定关系
 
-   ```
-   JAVA
+   ```JAVA
    package top.devildyw.consumer.config;
    
    import com.rabbitmq.client.AMQP;
@@ -1305,8 +1261,7 @@ JAVA
 
 6. 编写测试类
 
-   ```
-   JAVA
+   ```JAVA
    package top.devildyw.consumer;
    
    import org.junit.jupiter.api.Test;
@@ -1353,8 +1308,7 @@ JAVA
 
 7. 在`RabbitMQListener`新建一个方法 叫做`ListenerQueue` 带上`@RabbitListener`
 
-   ```
-   JAVA
+   ```JAVA
    //指定queue的名称
       @RabbitListener(queues = "boot_topic_queue")
       public void listenerQueue(Message message){
@@ -1392,8 +1346,7 @@ Spring AMQP发送方法中，接收消息的类型是Object，也就是说我们
 
 生产者消费者都引入JSON依赖
 
-```
-XML
+```XML
 <dependency>
     <groupId>org.springframework.boot</groupId>
     <artifactId>spring-boot-starter-json</artifactId>
@@ -1402,8 +1355,7 @@ XML
 
 配置新的消息转化器
 
-```
-JAVA
+```JAVA
 @Configuration
 public class RabbitMQConfig {
     @Bean
@@ -1415,8 +1367,7 @@ public class RabbitMQConfig {
 
 生产者发送
 
-```
-JAVA
+```JAVA
 @Test
 public void testMessageConverter(){
     HashMap<String, String> map = new HashMap<>();
@@ -1427,8 +1378,7 @@ public void testMessageConverter(){
 
 消费者接收
 
-```
-JAVA
+```JAVA
 @RabbitListener(queuesToDeclare = @Queue(
         name = "message.queue",
         durable = "true"
@@ -1478,8 +1428,7 @@ public void listenMessageJsonConverter(Map<String,Object> map){
 1. 创建生产者、消费者工程
 2. pom.xml依赖
 
-```
-XML
+```XML
 <dependencies>
        <dependency>
            <groupId>org.springframework.boot</groupId>
@@ -1498,8 +1447,7 @@ XML
 
 生产者
 
-```
-YML
+```YML
 spring:
   rabbitmq:
     host: 36.137.128.27
@@ -1511,8 +1459,7 @@ spring:
 
 消费者
 
-```
-YML
+```YML
 spring:
   rabbitmq:
     host: 36.137.128.27
@@ -1529,8 +1476,7 @@ spring:
 
 2. 消费者编写监听类
 
-   ```
-   JAVA
+   ```JAVA
    @Component
    public class SpringRabbitListener {
        @RabbitListener(queues = "test_queue_confirm")
@@ -1544,8 +1490,7 @@ spring:
 
 1. publisher这个微服务的application.yml中添加配置：
 
-   ```
-   YML
+   ```YML
    spring:
      rabbitmq:
      	.....
@@ -1557,17 +1502,7 @@ spring:
 
    配置说明：
 
-   - ```
-     publisher-confirm-type
-     ```
-
-     ：开启
-
-     ```
-     publisher-confirm
-     ```
-
-     ，这里支持两种类型：
+   - `publisher-confirm-type`：开启`publisher-confirm`，这里支持两种类型：
 
      - `simple`：同步等待`confirm`结果，直到超时（类似同步调用，等待消息发送到交换机中返回确认消息才继续执行）
      - `correlated`：异步回调，定义`ConfirmCallback`，`MQ`返回时会回调这个`ConfirmCallback`（异步调用，发送后继续后续操作，当交换机中接收到并返回结果时会通知。）
@@ -1578,8 +1513,7 @@ spring:
 
 2. 每个`RabbitTemplate`只能配置一个`ReturnCallback`，因此需要在项目启动过程中配置全局`ReturnCallback`：
 
-   ```
-   JAVA
+   ```JAVA
    package top.devildyw.producer.config;
    
    import lombok.extern.slf4j.Slf4j;
@@ -1618,8 +1552,7 @@ spring:
 
 3. `RabbitMQ`配置：交换机、队列、绑定关系
 
-   ```
-   JAVA
+   ```JAVA
    package top.devildyw.producer.config;
    
    import org.springframework.amqp.core.*;
@@ -1658,8 +1591,7 @@ spring:
 
 4. 使用测试类完成消息的发送
 
-   ```
-   JAVA
+   ```JAVA
    @Test
       public void TestConfirm(){
           //1.准备消息
@@ -1731,8 +1663,7 @@ SpringAMQP中处理消息确认的集中情况：
 
 1. 交换机持久化
 
-   ```
-   JAVA
+   ```JAVA
    @Bean("getExchange")
       public Exchange exchange(){
           Exchange exchange = ExchangeBuilder.topicExchange("amp.topic").durable(true).build();
@@ -1742,8 +1673,7 @@ SpringAMQP中处理消息确认的集中情况：
 
 2. 队列持久化
 
-   ```
-   JAVA
+   ```JAVA
    @Bean("getQueue")
       public Queue queue(){
           Queue queue = QueueBuilder.durable("test_queue_confirm").build();
@@ -1753,8 +1683,7 @@ SpringAMQP中处理消息确认的集中情况：
 
 3. 消息持久化，`Spring AMQP`中的消息**默认是持久的**，可以通过`MessageProperties`中的`DeliveryMode`来指定（指定持久或是不持久）。
 
-   ```
-   JAVA
+   ```JAVA
    MessageBuilder.withBody("hello".getBytes())
                    .setDeliveryMode(MessageDeliveryMode.PERSISTENT) //持久化消息
                    .build();
@@ -1780,8 +1709,7 @@ SpringAMQP中处理消息确认的集中情况：
 
 配置方式是修改**消费者**`application.yml`文件，添加下面配置：
 
-```
-YML
+```YML
 spring:
   rabbitmq:
   	.....
@@ -1803,8 +1731,7 @@ spring:
 
 我们可以利用Spring的retry机制，在消费者出现异常时例用本地重试，而不是无限制的`requeue`到`mq`的队列。
 
-```
-YML
+```YML
 spring:
   rabbitmq:
     host: 36.137.128.27
@@ -1841,8 +1768,7 @@ spring:
 
 - 首先定义接收失败消息的交换机、队列和其绑定关系：
 
-  ```
-  JAVA
+  ```JAVA
   @Bean
       public DirectExchange directExchange(){
           return new DirectExchange("error.direct"); //创建一个交换机 用于专门处理(重发)消费失败的消息
@@ -1865,8 +1791,7 @@ spring:
 
 - 然后，定义`RepublishMessageRecoverer`：
 
-  ```
-  JAVA
+  ```JAVA
   @Resource
       RabbitTemplate rabbitTemplate;
   
@@ -1941,8 +1866,7 @@ TTL，也就是Time-To-Live。如果一个队列中的消息TTL结束仍未消�
 
 - 消费者监听死信队列消息
 
-```
-JAVA
+```JAVA
 @Component
 @Slf4j
 public class SpringRabbitListener {
@@ -1960,8 +1884,7 @@ public class SpringRabbitListener {
 
 - TTL交换机、队列、绑定关系配置
 
-```
-JAVA
+```JAVA
 @Configuration
 public class TTLMessageConfig {
     @Bean
@@ -1989,8 +1912,7 @@ public class TTLMessageConfig {
 
 - 生产者发送消息
 
-  ```
-  JAVA
+  ```JAVA
   @Test
      public void testTTLMessage(){
          //1. 消息准备
@@ -2014,8 +1936,7 @@ public class TTLMessageConfig {
 
 - 发送消息时，给消息本省设置超时时间
 
-  ```
-  JAVA
+  ```JAVA
   @Test
      public void testTTLMessage(){
          //1. 消息准备
@@ -2065,22 +1986,19 @@ public class TTLMessageConfig {
 
    因为我们是基于Docker安装，所以需要先查看RabbitMQ的插件对应的数据卷。如果没有数据卷，可以先创建一个。
 
-   ```
-   BASH
+   ```BASH
    $ docker volume create mq-plugins
    ```
 
    删除原有容器，创建新容器挂载数据卷
 
-   ```
-   BASH
+   ```BASH
    $ docker run -d -p 15672:15672  -p  5672:5672  -e RABBITMQ_DEFAULT_USER=admin -v mq-plugins:/plugins -e RABBITMQ_DEFAULT_PASS=admin --name rabbitmq --hostname=rabbitmqhostone  rabbitmq:management
    ```
 
    查看数据卷信息查找数据卷目录
 
-   ```
-   BASH
+   ```BASH
    $ docker volume inspect mq-plugins
    ```
 
@@ -2092,8 +2010,7 @@ public class TTLMessageConfig {
 
    进入容器内部后，执行下面命令开启插件：
 
-   ```
-   BASH
+   ```BASH
    bash rabbitmq-plugins enable rabbitmq_delayed_message_exchange
    ```
 
@@ -2120,8 +2037,7 @@ public class TTLMessageConfig {
 
 基于注解的方式：
 
-```
-JAVA
+```JAVA
 @RabbitListener(bindings = @QueueBinding(
         value = @Queue(name = "delay.queue",durable = "true"),
         exchange = @Exchange(name = "delay.direct",delayed = "true"),
@@ -2134,8 +2050,7 @@ public void listenDelayedQueue(String msg){
 
 基于`Java`代码的方式
 
-```
-JAVA
+```JAVA
 @Configuration
 public class DelayExchangeConfig {
     @Bean
@@ -2160,8 +2075,7 @@ public class DelayExchangeConfig {
 
 然后我们相这个delay为true的交换机中发送消息，一定要给消息添加一个`header: x-delay`，值为延迟的时间，单位为毫秒
 
-```
-JAVA
+```JAVA
 @Test
 public void testDelayedMsg() {
     //创建消息
@@ -2215,8 +2129,7 @@ public void testDelayedMsg() {
 
 而要设置一个队列为惰性队列，只需要在声明队列时，指定x-queue-mode属性为lazy即可。可以通过命令行将一个运行中的队列修改为惰性队列：
 
-```
-BASH
+```BASH
 $ rabbitmqctl set——policy Lazy "^lazy-queue$" '{"queue-mode":"lazy"}' --apply-to queues
 ```
 
@@ -2324,29 +2237,25 @@ RabbitMQ底层依赖于Erlang，而Erlang虚拟机就是一个面向分布式的
 
 我们先在之前启动的`mq`容器中获取一个cookie值，作为集群的cookie。执行下面的命令：
 
-```
-SH
+```SH
 docker exec -it MQ容器id cat /var/lib/rabbitmq/.erlang.cookie
 ```
 
 可以看到cookie值如下
 
-```
-SH
+```SH
 CSKYABVGIEGXEZLHYGMR
 ```
 
 接下来，停止并删除当前的`MQ`容器，我们重新搭建集群。
 
-```
-SH
+```SH
 docker rm -f MQ容器id
 ```
 
 清理下docker的数据卷
 
-```
-SH
+```SH
 docker volume prune
 ```
 
@@ -2354,8 +2263,7 @@ docker volume prune
 
 在`/tmp`目录新建一个配置文件 `rabbitmq.conf`：
 
-```
-SH
+```SH
 cd /tmp
 # 创建文件
 touch rabbitmq.conf
@@ -2363,8 +2271,7 @@ touch rabbitmq.conf
 
 文件内容如下：
 
-```
-NGINX
+```NGINX
 loopback_users.guest = false #禁用默认的guest用户 防止不法之人访问
 listeners.tcp.default = 5672  #mq消息通信端口
 cluster_formation.peer_discovery_backend = rabbit_peer_discovery_classic_config
@@ -2375,8 +2282,7 @@ cluster_formation.classic_config.nodes.3 = rabbit@mq3
 
 再创建一个文件，记录cookie
 
-```
-SH
+```SH
 cd /tmp
 # 创建cookie文件
 touch .erlang.cookie
@@ -2388,8 +2294,7 @@ chmod 600 .erlang.cookie
 
 准备三个目录,mq1、mq2、mq3：
 
-```
-SH
+```SH
 cd /tmp
 # 创建目录
 mkdir mq1 mq2 mq3
@@ -2397,8 +2302,7 @@ mkdir mq1 mq2 mq3
 
 然后拷贝rabbitmq.conf、cookie文件到mq1、mq2、mq3：
 
-```
-SH
+```SH
 # 进入/tmp
 cd /tmp
 # 拷贝
@@ -2414,15 +2318,13 @@ cp .erlang.cookie mq3
 
 创建一个网络：
 
-```
-SH
+```SH
 docker network create mq-net
 ```
 
 运行命令
 
-```
-SH
+```SH
 docker run -d --net mq-net \
 -v ${PWD}/mq1/rabbitmq.conf:/etc/rabbitmq/rabbitmq.conf \
 -v ${PWD}/.erlang.cookie:/var/lib/rabbitmq/.erlang.cookie \
@@ -2433,7 +2335,8 @@ docker run -d --net mq-net \
 -p 8071:5672 \
 -p 8081:15672 \
 rabbitmq:3.10-management
-SH
+```
+```SH
 docker run -d --net mq-net \
 -v ${PWD}/mq2/rabbitmq.conf:/etc/rabbitmq/rabbitmq.conf \
 -v ${PWD}/.erlang.cookie:/var/lib/rabbitmq/.erlang.cookie \
@@ -2444,7 +2347,8 @@ docker run -d --net mq-net \
 -p 8072:5672 \
 -p 8082:15672 \
 rabbitmq:3.10-management
-SH
+```
+```SH
 docker run -d --net mq-net \
 -v ${PWD}/mq3/rabbitmq.conf:/etc/rabbitmq/rabbitmq.conf \
 -v ${PWD}/.erlang.cookie:/var/lib/rabbitmq/.erlang.cookie \
@@ -2489,8 +2393,7 @@ rabbitmq:3.10-management
 
 我们让其中一台节点mq1宕机：
 
-```
-SH
+```SH
 docker stop mq1
 ```
 
@@ -2534,8 +2437,7 @@ docker stop mq1
 
 ##### exactly模式
 
-```
-PLAINTEXT
+```PLAINTEXT
 rabbitmqctl set_policy ha-two "^two\." '{"ha-mode":"exactly","ha-params":2,"ha-sync-mode":"automatic"}'
 ```
 
@@ -2559,8 +2461,7 @@ rabbitmqctl set_policy ha-two "^two\." '{"ha-mode":"exactly","ha-params":2,"ha-s
 
 ##### all模式
 
-```
-PLAINTEXT
+```PLAINTEXT
 rabbitmqctl set_policy ha-all "^all\." '{"ha-mode":"all"}'
 ```
 
@@ -2580,8 +2481,7 @@ rabbitmqctl set_policy ha-all "^all\." '{"ha-mode":"all"}'
 
 ##### nodes模式
 
-```
-PLAINTEXT
+```PLAINTEXT
 rabbitmqctl set_policy ha-nodes "^nodes\." '{"ha-mode":"nodes","ha-params":["rabbit@nodeA", "rabbit@nodeB"]}'
 ```
 
@@ -2591,11 +2491,7 @@ rabbitmqctl set_policy ha-nodes "^nodes\." '{"ha-mode":"nodes","ha-params":["rab
 
 - `"^nodes\."`：匹配队列的正则表达式，符合命名规则的队列才生效，这里是任何以`nodes.`开头的队列名称
 
-- ```
-  '{"ha-mode":"nodes","ha-params":["rabbit@nodeA", "rabbit@nodeB"]}'
-  ```
-
-  : 策略内容
+- `'{"ha-mode":"nodes","ha-params":["rabbit@nodeA", "rabbit@nodeB"]}'`:策略内容
 
   - `"ha-mode":"nodes"`：策略模式，此处是nodes模式
   - `"ha-params":["rabbit@mq1", "rabbit@mq2"]`：策略参数，这里指定副本所在节点名称
@@ -2608,8 +2504,7 @@ rabbitmqctl set_policy ha-nodes "^nodes\." '{"ha-mode":"nodes","ha-params":["rab
 
 运行下面的指令：
 
-```
-SH
+```SH
 docker exec -it mq1 rabbitmqctl set_policy ha-two "^two\." '{"ha-mode":"exactly","ha-params":2,"ha-sync-mode":"automatic"}'
 ```
 
@@ -2645,8 +2540,7 @@ docker exec -it mq1 rabbitmqctl set_policy ha-two "^two\." '{"ha-mode":"exactly"
 
 现在，我们让two.queue的主节点mq1宕机：
 
-```
-SH
+```SH
 docker stop mq1
 ```
 
@@ -2698,8 +2592,7 @@ docker stop mq1
 
 在创建仲裁队列之前，首先需要配置连接集群。
 
-```
-YML
+```YML
 spring:
   rabbitmq:
 	.....
@@ -2712,8 +2605,7 @@ spring:
 
 创建仲裁队列
 
-```
-JAVA
+```JAVA
 @Configuration
 public class QuorumQueueConfig {
     @Bean

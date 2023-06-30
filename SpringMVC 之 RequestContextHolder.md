@@ -8,8 +8,7 @@
 
 `RequestContextHolder` 基于 `ThreadLocal` 实现。
 
-```
-JAVA
+```JAVA
 public abstract class RequestContextHolder  {
 
    private static final boolean jsfPresent =
@@ -26,8 +25,7 @@ public abstract class RequestContextHolder  {
 
 从 `SpringMVC` 源码入手，在 `FrameworkServlet#processRequest` 中，会在进入处理请求前，将 Request 封装为 `RequestAttributes`，放到 `RequestContextHolder` 中。
 
-```
-JAVA
+```JAVA
 protected final void processRequest(HttpServletRequest request, HttpServletResponse response)
       throws ServletException, IOException {
 
@@ -61,8 +59,7 @@ private void initContextHolders(HttpServletRequest request,
 
 `RequestContextHolder` 会根据 `threadContextInheritable` 选择将 `RequestAttributes` 放入 `inheritableRequestAttributesHolder` 或者 `inheritableRequestAttributesHolder` 中。
 
-```
-JAVA
+```JAVA
 public static void setRequestAttributes(@Nullable RequestAttributes attributes, boolean inheritable) {
    if (attributes == null) {
       resetRequestAttributes();
@@ -82,8 +79,7 @@ public static void setRequestAttributes(@Nullable RequestAttributes attributes, 
 
 取出 `RequestAttributes` 时会先从 `requestAttributes` 中取，取不到再到 `inheritableRequestAttributesHolder` 中取。
 
-```
-JAVA
+```JAVA
 @Nullable
 public static RequestAttributes getRequestAttributes() {
    RequestAttributes attributes = requestAttributesHolder.get();
@@ -106,8 +102,7 @@ public static RequestAttributes getRequestAttributes() {
 
 要使用 `inheritableRequestAttributesHolder` 替代 `requestAttributesHolder` ，关键在于 `FrameworkServlet` 中的 `threadContextInheritable`，该值为 false，即默认使用 `requestAttributesHolder`，将其设置为 true，则会使用 `inheritableRequestAttributesHolder`。通常 `requestAttributesHolder` 已经够用了。
 
-```
-JAVA
+```JAVA
 private boolean threadContextInheritable = false;
 
 RequestContextHolder.setRequestAttributes(requestAttributes, this.threadContextInheritable);

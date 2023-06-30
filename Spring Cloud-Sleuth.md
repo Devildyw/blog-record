@@ -68,8 +68,7 @@ Spring Cloud Sleuth 借用了 Dapper 的术语。
 
 每个note色块代表着一个span，（有七个span - 从A到G），思考一下下面的note
 
-```
-JAVA
+```JAVA
 Trace Id = X
 Span Id = D
 Client Sent
@@ -79,8 +78,7 @@ Client Sent
 
 再思考一下下面note，
 
-```
-JAVA
+```JAVA
 Trace Id = X
 Span Id = A
 (no custom span)
@@ -100,8 +98,7 @@ Span Id = C
 
 Spring Cloud Sleuth 的maven依赖
 
-```
-XML
+```XML
 <dependency>
   <groupId>org.springframework.cloud</groupId>
   <artifactId>spring-cloud-sleuth-zipkin</artifactId>
@@ -113,14 +110,11 @@ XML
 
 ### 服务提供者
 
-```
-Cloud-eureka-provider-payment8001
-```
+`Cloud-eureka-provider-payment8001`
 
 修改`application.yml`
 
-```
-YML
+```YML
 spring:
   zipkin:
     base-url: http://36.137.128.27:9411/
@@ -133,8 +127,7 @@ spring:
 
 修改业务类
 
-```
-JAVA
+```JAVA
 @RestController
 @Slf4j
 @RequestMapping("payment")
@@ -153,14 +146,11 @@ public class PaymentController {
 
 ### 服务消费者
 
-```
-Cloud-eureka-consumer-order80
-```
+`Cloud-eureka-consumer-order80`
 
 修改`application.yml`
 
-```
-YML
+```YML
 spring:
   zipkin:
     base-url: http://36.137.128.27:9411/
@@ -173,8 +163,7 @@ spring:
 
 修改业务类
 
-```
-JAVA
+```JAVA
 @Slf4j
 @RestController
 @RequestMapping("consumer")

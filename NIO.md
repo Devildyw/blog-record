@@ -44,8 +44,7 @@ NIO 是非阻塞的，在数据准备阶段不需要等待，需要启动一个�
 
 通过源码控制初始化时的上限（limit）和容量（capacity）是相同的，而位置（position）则是被初始化为了 0。
 
-```
-JAVA
+```JAVA
 public static ByteBuffer allocate(int capacity) {
     if (capacity < 0)
         throw new IllegalArgumentException();
@@ -143,8 +142,7 @@ Selector 会不断地轮询注册在上面所有 Channel，如果某个 channel 
 
 NIO提供一系列方法来操作Buffer的位置（position）和上限（limit），以及向缓冲区读写数据。
 
-```
-JAVA
+```JAVA
 put() //向缓冲区position位置添加数据。并且position往后移动，不能超过limit上限。
 get() //读取当前position位置的数据。并且position往后移动，不能超过limit上限。
 flip() //将limit置位为当前position位置，再讲position设置为0 切换读写模式。
@@ -160,8 +158,7 @@ duplicate() //复制缓冲区
 
 #### 创建缓冲区
 
-```
-JAVA
+```JAVA
 //创建一个容量为10的缓冲区
 ByteBuffer byteBuffer1 = ByteBuffer.allocate(10);
 
@@ -173,8 +170,7 @@ ByteBuffer byteBuffer2 = ByteBuffer.wrap("abcdef".getBytes());
 
 #### 获取/设置缓冲区参数
 
-```
-JAVA
+```JAVA
 ByteBuffer byteBuffer = ByteBuffer.allocate(10);
 
 System.out.println("位置："+byteBuffer.position());
@@ -188,8 +184,7 @@ System.out.println("容量："+byteBuffer.capacity());
 
 #### 添加数据到缓冲区
 
-```
-JAVA
+```JAVA
 ByteBuffer byteBuffer = ByteBuffer.allocate(10);
 
 //添加数据到缓冲区
@@ -205,8 +200,7 @@ System.out.println("capacity容量:"+byteBuffer.capacity()); //10
 
 rewind 函数将 position 置为 0 位置，并清除标记。
 
-```
-JAVA
+```JAVA
 ByteBuffer byteBuffer = ByteBuffer.allocate(10);
 
 //添加数据到缓冲区
@@ -232,8 +226,7 @@ System.out.println("capacity容量:"+byteBuffer.capacity()); //10
 
 flip 函数将 limit 设置为 position 位置，再将 position 置为 0 位置，并清除 mar 标记。
 
-```
-JAVA
+```JAVA
 ByteBuffer byteBuffer = ByteBuffer.allocate(10);
 
 //添加数据到缓冲区
@@ -261,8 +254,7 @@ System.out.println("capacity容量:"+byteBuffer.capacity()); //10
 
 `clear()` 方法也将 position 置为0，同时将 limit 置为 capacity 的大小，并清除 mark 标记。
 
-```
-JAVA
+```JAVA
 //创建一个容量为 10 的缓冲区
 ByteBuffer byteBuffer = ByteBuffer.allocate(10);
 
@@ -292,8 +284,7 @@ System.out.println("capacity容量:"+byteBuffer.capacity()); //10
 
 #### 标记和恢复
 
-```
-JAVA
+```JAVA
 //创建一个容量为 10 的缓冲区
 ByteBuffer byteBuffer = ByteBuffer.allocate(10);
 
@@ -317,8 +308,7 @@ System.out.println("恢复标记位置:"+byteBuffer.position()); //5
 
 本地文件 IO 通道，用于读取、写入、映射和操作文件的通道。
 
-```
-JAVA
+```JAVA
 //创建读取文件通道
 FileChannel fisChannel = new FileInputStream("day05/src/a.txt").getChannel();
 //创建写入文件的通道
@@ -346,8 +336,7 @@ fosChannel.close();
 
 使用 SocketChannel 通道上传文件到服务器。
 
-```
-JAVA
+```JAVA
 public class SocketChannelDemo {
 
     public static void main(String[] args) throws IOException {
@@ -384,8 +373,7 @@ public class SocketChannelDemo {
 
 使用 ServerSocketChannel 通道接收文件并保存在服务器。
 
-```
-JAVA
+```JAVA
 public class ServerSocketChannelDemo {
     public static void main(String[] args) throws IOException {
         //创建ServerSocketChannel通道
@@ -429,8 +417,7 @@ public class ServerSocketChannelDemo {
 
 ### NIO Selector 的服务器
 
-```
-JAVA
+```JAVA
 public class Server {
     public static void main(String[] args) throws IOException {
         ServerSocketChannel serverSocketChannel = ServerSocketChannel.open();
